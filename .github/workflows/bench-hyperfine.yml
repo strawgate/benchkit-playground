@@ -1,0 +1,73 @@
+name: Benchmark (Hyperfine format)
+
+# Tests: Hyperfine JSON format parsing, mean/stddev/min/max metrics,
+# and auto-format detection on a hyperfine file.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bench-hyperfine:
+    name: Hyperfine JSON benchmark
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate synthetic Hyperfine JSON output
+        run: |
+          python3 - <<'EOF'
+          import random, json
+
+          def vary(base, pct=0.05):
+              return round(base * (1 + random.uniform(-pct, pct)), 5)
+
+          def make_times(mean, stddev, n=10):
+              return [round(max(mean - 3*stddev, mean + random.gauss(0, stddev)), 5) for _ in range(n)]
+
+          commands = [
+              ("sort /etc/passwd",   0.00312, 0.00018),
+              ("cat /etc/passwd",    0.00089, 0.00011),
+              ("wc -l /etc/passwd",  0.00134, 0.00015),
+              ("grep root /etc/passwd", 0.00156, 0.00019),
+          ]
+
+          results = []
+          for cmd, base_mean, base_std in commands:
+              mean = vary(base_mean)
+              stddev = vary(base_std, 0.10)
+              times = make_times(mean, stddev)
+              results.append({
+                  "command": cmd,
+                  "mean": mean,
+                  "stddev": stddev,
+                  "median": round(sorted(times)[len(times)//2], 5),
+                  "min": min(times),
+                  "max": max(times),
+                  "times": sorted(times),
+              })
+
+          with open("hyperfine-results.json", "w") as f:
+              json.dump({"results": results}, f, indent=2)
+              f.write("\n")
+          print("Generated hyperfine-results.json")
+          EOF
+
+      - name: Stash Hyperfine results (explicit format)
+        uses: strawgate/benchkit/actions/stash@main
+        with:
+          results: hyperfine-results.json
+          format: hyperfine
+          summary: true
+
+      - name: Stash Hyperfine results (auto-detect)
+        uses: strawgate/benchkit/actions/stash@main
+        with:
+          results: hyperfine-results.json
+          format: auto
+          run-id: ${{ github.run_id }}-${{ github.run_attempt }}--bench-hyperfine-auto
+          summary: true

@@ -1,0 +1,32 @@
+name: Aggregate benchmarks
+
+# Triggered whenever a new raw run file lands on bench-data.
+# Rebuilds all derived indexes and series.
+#
+# The paths filter (data/runs/**) ensures that the aggregate workflow's
+# own writes (index.json, series/**) do NOT re-trigger this workflow,
+# preventing an infinite loop.
+
+on:
+  push:
+    branches:
+      - bench-data
+    paths:
+      - 'data/runs/**'
+
+permissions:
+  contents: write
+
+jobs:
+  aggregate:
+    name: Aggregate benchmark data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: bench-data
+
+      - name: Aggregate
+        uses: strawgate/benchkit/actions/aggregate@main
+        with:
+          max-runs: 50

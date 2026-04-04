@@ -1,0 +1,86 @@
+name: Benchmark (native JSON format)
+
+# Tests: native format parsing (explicit), auto-detection, and step summary output.
+# Generates results with small random variation to build up realistic time-series data.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bench-native:
+    name: Native JSON benchmark
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate benchmark results with variation
+        run: |
+          node - <<'EOF'
+          const vary = (base, pct = 0.05) => Math.round(base * (1 + (Math.random() * 2 - 1) * pct));
+          const result = {
+            benchmarks: [
+              {
+                name: "SearchAlgorithms/linear",
+                tags: { dataset: "uniform", size: "10000" },
+                metrics: {
+                  ns_per_op: { value: vary(245), unit: "ns/op", direction: "smaller_is_better" },
+                  throughput: { value: vary(125000), unit: "ops/sec", direction: "bigger_is_better" },
+                },
+              },
+              {
+                name: "SearchAlgorithms/binary",
+                tags: { dataset: "uniform", size: "10000" },
+                metrics: {
+                  ns_per_op: { value: vary(45), unit: "ns/op", direction: "smaller_is_better" },
+                  throughput: { value: vary(850000), unit: "ops/sec", direction: "bigger_is_better" },
+                },
+              },
+              {
+                name: "SearchAlgorithms/hash",
+                tags: { dataset: "uniform", size: "10000" },
+                metrics: {
+                  ns_per_op: { value: vary(12), unit: "ns/op", direction: "smaller_is_better" },
+                  throughput: { value: vary(3200000), unit: "ops/sec", direction: "bigger_is_better" },
+                },
+              },
+              {
+                name: "DataStructures/btree-insert",
+                tags: { structure: "btree", order: "16" },
+                metrics: {
+                  ns_per_op: { value: vary(890), unit: "ns/op", direction: "smaller_is_better" },
+                  bytes_per_op: { value: vary(128, 0.02), unit: "B/op", direction: "smaller_is_better" },
+                },
+              },
+              {
+                name: "DataStructures/btree-delete",
+                tags: { structure: "btree", order: "16" },
+                metrics: {
+                  ns_per_op: { value: vary(340), unit: "ns/op", direction: "smaller_is_better" },
+                },
+              },
+              {
+                name: "DataStructures/btree-lookup",
+                tags: { structure: "btree", order: "16" },
+                metrics: {
+                  ns_per_op: { value: vary(78), unit: "ns/op", direction: "smaller_is_better" },
+                },
+              },
+            ],
+          };
+          require("fs").writeFileSync("bench-results.json", JSON.stringify(result, null, 2) + "\n");
+          console.log("Generated:", JSON.stringify(result, null, 2));
+          EOF
+
+      - name: Stash results (explicit native format)
+        uses: strawgate/benchkit/actions/stash@main
+        with:
+          results: bench-results.json
+          format: native
+          summary: true

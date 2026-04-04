@@ -1,0 +1,52 @@
+{
+  "benchmarks": [
+    {
+      "name": "SearchAlgorithms/linear",
+      "tags": { "dataset": "uniform", "size": "10000" },
+      "metrics": {
+        "ns_per_op": { "value": 245, "unit": "ns/op", "direction": "smaller_is_better" },
+        "throughput": { "value": 125000, "unit": "ops/sec", "direction": "bigger_is_better" }
+      }
+    },
+    {
+      "name": "SearchAlgorithms/binary",
+      "tags": { "dataset": "uniform", "size": "10000" },
+      "metrics": {
+        "ns_per_op": { "value": 45, "unit": "ns/op", "direction": "smaller_is_better" },
+        "throughput": { "value": 850000, "unit": "ops/sec", "direction": "bigger_is_better" }
+      }
+    },
+    {
+      "name": "SearchAlgorithms/hash",
+      "tags": { "dataset": "uniform", "size": "10000" },
+      "metrics": {
+        "ns_per_op": { "value": 12, "unit": "ns/op", "direction": "smaller_is_better" },
+        "throughput": { "value": 3200000, "unit": "ops/sec", "direction": "bigger_is_better" }
+      }
+    },
+    {
+      "name": "DataStructures/btree-insert",
+      "tags": { "structure": "btree", "order": "16" },
+      "metrics": {
+        "ns_per_op": { "value": 890, "unit": "ns/op", "direction": "smaller_is_better" },
+        "bytes_per_op": { "value": 128, "unit": "B/op", "direction": "smaller_is_better" }
+      }
+    },
+    {
+      "name": "DataStructures/btree-delete",
+      "tags": { "structure": "btree", "order": "16" },
+      "metrics": {
+        "ns_per_op": { "value": 340, "unit": "ns/op", "direction": "smaller_is_better" },
+        "bytes_per_op": { "value": 0, "unit": "B/op", "direction": "smaller_is_better" }
+      }
+    },
+    {
+      "name": "DataStructures/btree-lookup",
+      "tags": { "structure": "btree", "order": "16" },
+      "metrics": {
+        "ns_per_op": { "value": 78, "unit": "ns/op", "direction": "smaller_is_better" },
+        "bytes_per_op": { "value": 0, "unit": "B/op", "direction": "smaller_is_better" }
+      }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+name: Benchmark (Go format)
+
+# Tests: Go test -bench output parsing, multi-metric lines (ns/op + B/op + allocs/op),
+# sub-benchmark names with slashes, and the summary step output.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bench-go:
+    name: Go benchmark format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate synthetic Go benchmark output
+        run: |
+          # Simulate go test -bench output with ±5% variation
+          python3 - <<'EOF'
+          import random, math
+
+          def vary(base, pct=0.05):
+              return round(base * (1 + random.uniform(-pct, pct)))
+
+          lines = [
+              "goos: linux",
+              "goarch: amd64",
+              "pkg: github.com/example/parser",
+              "cpu: Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+              f"BenchmarkParseSmall-8       500000       {vary(2345)} ns/op       {vary(1024, 0.02)} B/op       12 allocs/op",
+              f"BenchmarkParseMedium-8      100000      {vary(12456)} ns/op       {vary(4096, 0.02)} B/op       48 allocs/op",
+              f"BenchmarkParseLarge-8        10000     {vary(123456)} ns/op      {vary(16384, 0.02)} B/op      192 allocs/op",
+              f"BenchmarkParseJSON-8        200000       {vary(5678)} ns/op       {vary(2048, 0.02)} B/op       24 allocs/op",
+              f"BenchmarkParseXML-8          50000      {vary(18923)} ns/op       {vary(8192, 0.02)} B/op       96 allocs/op",
+              f"BenchmarkEncodeSmall-8      800000       {vary(1567)} ns/op        {vary(512, 0.02)} B/op        8 allocs/op",
+              f"BenchmarkEncodeMedium-8     300000       {vary(4321)} ns/op       {vary(2048, 0.02)} B/op       32 allocs/op",
+              f"BenchmarkEncodeLarge-8       30000      {vary(43210)} ns/op       {vary(8192, 0.02)} B/op      128 allocs/op",
+              f"BenchmarkRoundtrip/json-8    80000      {vary(16234)} ns/op       {vary(6144, 0.02)} B/op       72 allocs/op",
+              f"BenchmarkRoundtrip/xml-8     20000      {vary(65432)} ns/op      {vary(24576, 0.02)} B/op      288 allocs/op",
+              "PASS",
+              "ok      github.com/example/parser    8.234s",
+          ]
+          with open("go-bench.txt", "w") as f:
+              f.write("\n".join(lines) + "\n")
+          print("Generated go-bench.txt")
+          EOF
+
+      - name: Stash Go benchmark results
+        uses: strawgate/benchkit/actions/stash@main
+        with:
+          results: go-bench.txt
+          format: go
+          summary: true

@@ -1,0 +1,109 @@
+name: Benchmark (monitor + emit-metric)
+
+# Tests: monitor sidecar lifecycle, emit-metric OTLP emission, and
+# stash with monitor context merged into the stored result.
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bench-with-monitor:
+    name: Benchmark with OTel monitor
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start monitor
+        id: monitor
+        uses: strawgate/benchkit/actions/monitor@main
+        with:
+          scrape-interval: 5s
+          metric-sets: cpu,memory,load,process
+
+      - name: Emit a custom workflow metric (before benchmarks)
+        uses: strawgate/benchkit/actions/emit-metric@main
+        with:
+          otlp-http-endpoint: ${{ steps.monitor.outputs.otlp-http-endpoint }}
+          name: workflow_setup_ms
+          value: 250
+          unit: ms
+          scenario: setup
+          series: baseline
+          direction: smaller_is_better
+
+      - name: Run a CPU-bound workload (simulated)
+        run: |
+          # Simulate a workload so monitor captures real CPU/memory telemetry
+          python3 - <<'EOF'
+          import time, math, os
+
+          # Burn ~5 seconds of CPU
+          start = time.time()
+          acc = 0.0
+          while time.time() - start < 5.0:
+              for i in range(10000):
+                  acc += math.sqrt(i) * math.log(i + 1)
+
+          elapsed_ms = round((time.time() - start) * 1000)
+          print(f"Workload complete in {elapsed_ms}ms, acc={acc:.2f}")
+          EOF
+
+      - name: Generate benchmark results
+        run: |
+          python3 - <<'EOF'
+          import random, json, time
+
+          def vary(base, pct=0.05):
+              return round(base * (1 + random.uniform(-pct, pct)), 2)
+
+          result = {
+              "benchmarks": [
+                  {
+                      "name": "CPUWorkload/compute",
+                      "tags": {"type": "cpu-bound"},
+                      "metrics": {
+                          "ns_per_op": {"value": vary(4920000), "unit": "ns/op", "direction": "smaller_is_better"},
+                          "throughput": {"value": vary(203000), "unit": "ops/sec", "direction": "bigger_is_better"},
+                      },
+                  },
+                  {
+                      "name": "CPUWorkload/memory",
+                      "tags": {"type": "memory-bound"},
+                      "metrics": {
+                          "ns_per_op": {"value": vary(8450000), "unit": "ns/op", "direction": "smaller_is_better"},
+                          "bytes_per_op": {"value": vary(65536, 0.02), "unit": "B/op", "direction": "smaller_is_better"},
+                      },
+                  },
+              ]
+          }
+          with open("bench-results.json", "w") as f:
+              json.dump(result, f, indent=2)
+              f.write("\n")
+          EOF
+
+      - name: Emit a custom metric (after benchmarks)
+        uses: strawgate/benchkit/actions/emit-metric@main
+        with:
+          otlp-http-endpoint: ${{ steps.monitor.outputs.otlp-http-endpoint }}
+          name: benchmark_score
+          value: 87
+          unit: points
+          scenario: full-suite
+          series: baseline
+          direction: bigger_is_better
+          attributes: |
+            runner=ubuntu-latest
+            variant=default
+
+      - name: Stash results with monitor context
+        uses: strawgate/benchkit/actions/stash@main
+        with:
+          results: bench-results.json
+          format: native
+          monitor: ${{ steps.monitor.outputs.monitor-json }}
+          summary: true

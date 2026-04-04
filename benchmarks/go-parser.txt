@@ -1,0 +1,16 @@
+goos: linux
+goarch: amd64
+pkg: github.com/example/parser
+cpu: Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz
+BenchmarkParseSmall-8       500000       2345 ns/op       1024 B/op       12 allocs/op
+BenchmarkParseMedium-8      100000      12456 ns/op       4096 B/op       48 allocs/op
+BenchmarkParseLarge-8        10000     123456 ns/op      16384 B/op      192 allocs/op
+BenchmarkParseJSON-8        200000       5678 ns/op       2048 B/op       24 allocs/op
+BenchmarkParseXML-8          50000      18923 ns/op       8192 B/op       96 allocs/op
+BenchmarkEncodeSmall-8      800000       1567 ns/op        512 B/op        8 allocs/op
+BenchmarkEncodeMedium-8     300000       4321 ns/op       2048 B/op       32 allocs/op
+BenchmarkEncodeLarge-8       30000      43210 ns/op       8192 B/op      128 allocs/op
+BenchmarkRoundtrip/json-8    80000      16234 ns/op       6144 B/op       72 allocs/op
+BenchmarkRoundtrip/xml-8     20000      65432 ns/op      24576 B/op      288 allocs/op
+PASS
+ok      github.com/example/parser    8.234s

@@ -1,0 +1,72 @@
+name: Benchmark (matrix build)
+
+# Tests: collision-proof run-id with matrix keys, concurrent stash writes,
+# and multiple series in a single aggregated view.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bench-variant:
+    name: Benchmark (${{ matrix.variant }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [fast, balanced, thorough]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate benchmark results for ${{ matrix.variant }}
+        run: |
+          python3 - <<'EOF'
+          import random, json, os
+
+          variant = os.environ["VARIANT"]
+
+          # Each variant represents a different algorithm implementation
+          profiles = {
+              "fast":      {"ns_per_op": 890,  "accuracy": 0.72, "memory_mb": 12},
+              "balanced":  {"ns_per_op": 2340, "accuracy": 0.91, "memory_mb": 45},
+              "thorough":  {"ns_per_op": 8920, "accuracy": 0.99, "memory_mb": 128},
+          }
+
+          def vary(base, pct=0.04):
+              return round(base * (1 + random.uniform(-pct, pct)), 3)
+
+          p = profiles[variant]
+          result = {
+              "benchmarks": [
+                  {
+                      "name": "SolverAlgorithm",
+                      "tags": {"variant": variant},
+                      "metrics": {
+                          "ns_per_op":  {"value": vary(p["ns_per_op"]),  "unit": "ns/op",  "direction": "smaller_is_better"},
+                          "accuracy":   {"value": vary(p["accuracy"], 0.01), "unit": "score", "direction": "bigger_is_better"},
+                          "memory_mb":  {"value": vary(p["memory_mb"], 0.02), "unit": "MB", "direction": "smaller_is_better"},
+                      },
+                  }
+              ]
+          }
+          with open("bench-results.json", "w") as f:
+              json.dump(result, f, indent=2)
+              f.write("\n")
+          print(f"Generated {variant} results:", json.dumps(result, indent=2))
+          EOF
+        env:
+          VARIANT: ${{ matrix.variant }}
+
+      - name: Stash results
+        uses: strawgate/benchkit/actions/stash@main
+        with:
+          results: bench-results.json
+          format: native
+          # Matrix jobs share the same GITHUB_JOB name, so we must include
+          # the matrix key in the run-id to avoid file collisions.
+          run-id: ${{ github.run_id }}-${{ github.run_attempt }}--bench-variant-${{ matrix.variant }}
+          summary: true

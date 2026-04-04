@@ -1,0 +1,144 @@
+name: Deploy to GitHub Pages
+
+# Builds the benchkit dashboard configured to point at this repo's bench-data branch,
+# then deploys it to GitHub Pages.
+#
+# Because @benchkit/chart is not published to npm, this workflow clones the benchkit
+# monorepo, builds the packages locally, then builds the dashboard from source using
+# a playground-specific main.tsx.
+
+on:
+  push:
+    branches: [main, bench-data]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build dashboard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout playground
+        uses: actions/checkout@v4
+        with:
+          path: playground
+
+      - name: Checkout benchkit
+        uses: actions/checkout@v4
+        with:
+          repository: strawgate/benchkit
+          path: benchkit
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: benchkit/package-lock.json
+
+      - name: Install benchkit dependencies
+        run: npm ci
+        working-directory: benchkit
+
+      - name: Build format package
+        run: npm run build --workspace=packages/format
+        working-directory: benchkit
+
+      - name: Build chart package
+        run: npm run build --workspace=packages/chart
+        working-directory: benchkit
+
+      - name: Write playground dashboard entry point
+        run: |
+          cat > benchkit/packages/dashboard/src/main.tsx << 'EOF'
+          import { render } from "preact";
+          import "@benchkit/chart/css";
+          import { Dashboard } from "@benchkit/chart";
+
+          function App() {
+            return (
+              <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+                <header
+                  style={{
+                    background: "#1e293b",
+                    color: "#f1f5f9",
+                    padding: "16px 24px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                  }}
+                >
+                  <span style={{ fontSize: "1.5rem", fontWeight: 700 }}>Benchkit</span>
+                  <span style={{ fontSize: "0.875rem", color: "#94a3b8" }}>Playground</span>
+                </header>
+                <main style={{ flex: 1, padding: "24px" }}>
+                  <Dashboard
+                    source={{ owner: "strawgate", repo: "benchkit-playground", branch: "bench-data" }}
+                    seriesNameFormatter={(name) => name.replace(/^Benchmark/, "")}
+                    commitHref={(sha) => `https://github.com/strawgate/benchkit-playground/commit/${sha}`}
+                    regressionThreshold={10}
+                    regressionWindow={5}
+                  />
+                </main>
+                <footer
+                  style={{
+                    textAlign: "center",
+                    padding: "12px",
+                    fontSize: "0.75rem",
+                    color: "#6b7280",
+                    borderTop: "1px solid #e5e7eb",
+                  }}
+                >
+                  Powered by{" "}
+                  <a href="https://github.com/strawgate/benchkit" style={{ color: "#3b82f6" }}>
+                    benchkit
+                  </a>
+                </footer>
+              </div>
+            );
+          }
+
+          render(<App />, document.getElementById("app")!);
+          EOF
+
+      - name: Write playground vite config (base = /benchkit-playground/)
+        run: |
+          cat > benchkit/packages/dashboard/vite.config.ts << 'EOF'
+          import { defineConfig } from "vite";
+          import preact from "@preact/preset-vite";
+
+          export default defineConfig({
+            plugins: [preact()],
+            base: "/benchkit-playground/",
+            build: {
+              commonjsOptions: {
+                include: [/format/, /node_modules/],
+              },
+            },
+          });
+          EOF
+
+      - name: Build dashboard
+        run: npm run build --workspace=packages/dashboard
+        working-directory: benchkit
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: benchkit/packages/dashboard/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

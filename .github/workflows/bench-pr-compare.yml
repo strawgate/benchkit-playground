@@ -1,0 +1,84 @@
+name: PR benchmark comparison
+
+# Tests: compare action on pull requests, regression detection, PR comment
+# posting/updating, and fail-on-regression behavior.
+#
+# NOTE: The first few PRs against a fresh bench-data branch will have no
+# baseline runs and should produce a graceful "no baseline" message — not an error.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  compare:
+    name: Compare benchmark results
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate benchmark results (may include simulated regression)
+        run: |
+          python3 - <<'EOF'
+          import random, json, os
+
+          # Simulate a slight regression on the PR to test detection
+          # In a real project this would be the actual benchmark run
+          def vary(base, pct=0.05):
+              return round(base * (1 + random.uniform(-pct, pct)))
+
+          # Introduce a deliberate 8% regression on binary search
+          result = {
+              "benchmarks": [
+                  {
+                      "name": "SearchAlgorithms/linear",
+                      "tags": {"dataset": "uniform", "size": "10000"},
+                      "metrics": {
+                          "ns_per_op": {"value": vary(245),  "unit": "ns/op",   "direction": "smaller_is_better"},
+                          "throughput": {"value": vary(125000), "unit": "ops/sec", "direction": "bigger_is_better"},
+                      },
+                  },
+                  {
+                      "name": "SearchAlgorithms/binary",
+                      "tags": {"dataset": "uniform", "size": "10000"},
+                      "metrics": {
+                          # Deliberate +8% regression to test threshold detection
+                          "ns_per_op": {"value": vary(265), "unit": "ns/op", "direction": "smaller_is_better"},
+                          "throughput": {"value": vary(780000), "unit": "ops/sec", "direction": "bigger_is_better"},
+                      },
+                  },
+                  {
+                      "name": "SearchAlgorithms/hash",
+                      "tags": {"dataset": "uniform", "size": "10000"},
+                      "metrics": {
+                          "ns_per_op": {"value": vary(12), "unit": "ns/op", "direction": "smaller_is_better"},
+                          "throughput": {"value": vary(3200000), "unit": "ops/sec", "direction": "bigger_is_better"},
+                      },
+                  },
+              ]
+          }
+          with open("bench-results.json", "w") as f:
+              json.dump(result, f, indent=2)
+              f.write("\n")
+          EOF
+
+      - name: Compare against baseline
+        id: compare
+        uses: strawgate/benchkit/actions/compare@main
+        with:
+          results: bench-results.json
+          format: native
+          baseline-runs: 5
+          threshold: 5
+          fail-on-regression: false
+          comment-on-pr: true
+
+      - name: Report regression status
+        if: steps.compare.outputs.has-regression == 'true'
+        run: |
+          echo "⚠️ Regression detected in this PR!"
+          echo "${{ steps.compare.outputs.summary }}"
