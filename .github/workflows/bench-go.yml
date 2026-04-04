@@ -11,6 +11,9 @@ on:
 permissions:
   contents: write
   actions: write
+
+jobs:
+  bench-go:
     name: Go benchmark format
     runs-on: ubuntu-latest
     steps:

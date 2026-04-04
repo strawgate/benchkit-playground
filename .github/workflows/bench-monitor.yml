@@ -11,6 +11,9 @@ on:
 permissions:
   contents: write
   actions: write
+
+jobs:
+  bench-with-monitor:
     name: Benchmark with OTel monitor
     runs-on: ubuntu-latest
     steps:

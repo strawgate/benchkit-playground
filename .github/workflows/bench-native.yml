@@ -13,6 +13,9 @@ on:
 permissions:
   contents: write
   actions: write
+
+jobs:
+  bench-native:
     name: Native JSON benchmark
     runs-on: ubuntu-latest
     steps:

@@ -11,6 +11,9 @@ on:
 permissions:
   contents: write
   actions: write
+
+jobs:
+  bench-variant:
     name: Benchmark (${{ matrix.variant }})
     runs-on: ubuntu-latest
     strategy:

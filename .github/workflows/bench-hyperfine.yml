@@ -11,6 +11,9 @@ on:
 permissions:
   contents: write
   actions: write
+
+jobs:
+  bench-hyperfine:
     name: Hyperfine JSON benchmark
     runs-on: ubuntu-latest
     steps:
