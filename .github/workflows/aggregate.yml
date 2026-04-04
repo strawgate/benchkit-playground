@@ -30,8 +30,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: bench-data
 
       - name: Aggregate
         uses: strawgate/benchkit/actions/aggregate@main
