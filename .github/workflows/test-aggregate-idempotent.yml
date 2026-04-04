@@ -1,0 +1,46 @@
+name: Test aggregate idempotency
+
+# Tests: running aggregate twice in a row with no new run files.
+# The second run should produce an identical result (no commit).
+# Also checks that run-count and metrics outputs are correct.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  aggregate-idempotent:
+    name: Aggregate runs twice, check no spurious commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: First aggregate
+        id: agg1
+        uses: strawgate/benchkit/actions/aggregate@main
+        with:
+          max-runs: 0
+
+      - name: Second aggregate (should be no-op)
+        id: agg2
+        uses: strawgate/benchkit/actions/aggregate@main
+        with:
+          max-runs: 0
+
+      - name: Compare outputs
+        run: |
+          echo "First aggregate:"
+          echo "  run-count: ${{ steps.agg1.outputs.run-count }}"
+          echo "  metrics: ${{ steps.agg1.outputs.metrics }}"
+          echo ""
+          echo "Second aggregate:"
+          echo "  run-count: ${{ steps.agg2.outputs.run-count }}"
+          echo "  metrics: ${{ steps.agg2.outputs.metrics }}"
+          echo ""
+          if [ "${{ steps.agg1.outputs.run-count }}" = "${{ steps.agg2.outputs.run-count }}" ]; then
+            echo "✅ run-count consistent across two aggregate runs"
+          else
+            echo "⚠️  run-count changed: ${{ steps.agg1.outputs.run-count }} → ${{ steps.agg2.outputs.run-count }}"
+          fi

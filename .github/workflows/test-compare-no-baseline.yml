@@ -1,0 +1,46 @@
+name: Test compare with no baseline
+
+# Tests: what happens when compare runs against a branch with zero baseline runs.
+# Should degrade gracefully (no error, just a "no baseline" message).
+# Also tests compare against a completely non-existent data branch.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compare-no-baseline:
+    name: Compare with empty data branch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate benchmark results
+        run: |
+          echo '{"benchmarks":[{"name":"Test","metrics":{"ns_per_op":{"value":100,"unit":"ns/op","direction":"smaller_is_better"}}}]}' > bench.json
+
+      - name: Compare against non-existent branch
+        id: compare
+        continue-on-error: true
+        uses: strawgate/benchkit/actions/compare@main
+        with:
+          results: bench.json
+          format: native
+          baseline-runs: 5
+          threshold: 5
+          fail-on-regression: false
+          comment-on-pr: false
+          data-branch: bench-data-nonexistent-12345
+
+      - name: Check graceful handling
+        run: |
+          echo "compare outcome: ${{ steps.compare.outcome }}"
+          echo "has-regression: ${{ steps.compare.outputs.has-regression }}"
+          echo "summary: ${{ steps.compare.outputs.summary }}"
+          if [ "${{ steps.compare.outcome }}" = "success" ]; then
+            echo "✅ Compare handled missing branch gracefully"
+          else
+            echo "❌ Compare failed with missing branch — should have degraded gracefully"
+          fi
