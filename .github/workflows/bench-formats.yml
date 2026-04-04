@@ -1,0 +1,222 @@
+name: Benchmark (Rust + pytest-benchmark + benchmark-action formats)
+
+# Tests: Rust cargo bench, pytest-benchmark JSON, and benchmark-action JSON formats.
+# Also tests stash with a glob pattern to merge multiple files.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  bench-rust:
+    name: Rust cargo bench format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate synthetic Rust bench output
+        run: |
+          python3 - <<'EOF'
+          import random
+
+          def vary(base, pct=0.05):
+              v = round(base * (1 + random.uniform(-pct, pct)))
+              r = round(v * random.uniform(0.01, 0.05))
+              return v, r
+
+          lines = ["running 6 tests"]
+          benchmarks = [
+              ("hash::bench_insert", 890),
+              ("hash::bench_lookup", 78),
+              ("hash::bench_delete", 340),
+              ("sort::bench_quicksort", 4520),
+              ("sort::bench_mergesort", 5120),
+              ("sort::bench_heapsort", 6780),
+          ]
+          for name, base in benchmarks:
+              v, r = vary(base)
+              lines.append(f"test {name:<36} ... bench: {v:>12} ns/iter (+/- {r})")
+          lines.append("")
+          lines.append("test result: ok. 0 passed; 0 failed; 0 ignored; 6 measured; 0 filtered out")
+
+          with open("rust-bench.txt", "w") as f:
+              f.write("\n".join(lines) + "\n")
+          print("Generated rust-bench.txt")
+          EOF
+
+      - name: Stash Rust results
+        uses: strawgate/benchkit/actions/stash@main
+        with:
+          results: rust-bench.txt
+          format: rust
+          summary: true
+
+      - name: Trigger aggregate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run aggregate.yml --repo ${{ github.repository }}
+
+  bench-pytest:
+    name: pytest-benchmark JSON format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate synthetic pytest-benchmark JSON output
+        run: |
+          python3 - <<'EOF'
+          import random, json
+
+          def vary(base, pct=0.05):
+              return round(base * (1 + random.uniform(-pct, pct)), 8)
+
+          benchmarks_data = [
+              ("test_json_parse", 0.000134, 0.0000089, 1000, 7462),
+              ("test_json_encode", 0.000063, 0.000005, 2000, 15873),
+              ("test_db_query_simple", 0.00892, 0.00042, 200, 112),
+              ("test_db_query_join", 0.04231, 0.00189, 50, 23),
+              ("test_http_handler", 0.000891, 0.000067, 1500, 1122),
+          ]
+
+          benchmarks = []
+          for name, base_mean, base_std, rounds, ops in benchmarks_data:
+              mean = vary(base_mean)
+              std = vary(base_std, 0.10)
+              benchmarks.append({
+                  "name": name,
+                  "fullname": f"tests/test_perf.py::{name}",
+                  "stats": {
+                      "min":    round(mean - std, 8),
+                      "max":    round(mean + std * 3, 8),
+                      "mean":   mean,
+                      "stddev": std,
+                      "rounds": rounds,
+                      "median": round(mean * random.uniform(0.98, 1.02), 8),
+                      "ops":    round(1 / mean, 2),
+                  },
+              })
+
+          output = {"benchmarks": benchmarks, "machine_info": {"node": "runner"}}
+          with open("pytest-bench.json", "w") as f:
+              json.dump(output, f, indent=2)
+              f.write("\n")
+          print("Generated pytest-bench.json")
+          EOF
+
+      - name: Stash pytest-benchmark results
+        uses: strawgate/benchkit/actions/stash@main
+        with:
+          results: pytest-bench.json
+          format: pytest
+          summary: true
+
+      - name: Trigger aggregate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run aggregate.yml --repo ${{ github.repository }}
+
+  bench-benchmark-action:
+    name: benchmark-action JSON format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate synthetic benchmark-action JSON output
+        run: |
+          python3 - <<'EOF'
+          import random, json
+
+          def vary(base, pct=0.05):
+              return round(base * (1 + random.uniform(-pct, pct)), 2)
+
+          results = [
+              {"name": "FibonacciRecursive",  "unit": "ops/sec", "value": vary(12400)},
+              {"name": "FibonacciIterative",  "unit": "ops/sec", "value": vary(98200)},
+              {"name": "FibonacciMemoized",   "unit": "ops/sec", "value": vary(87500)},
+              {"name": "MatrixMultiply 100x",  "unit": "ns/iter", "value": vary(15600), "range": "± 800"},
+              {"name": "MatrixMultiply 500x",  "unit": "ns/iter", "value": vary(342000), "range": "± 12000"},
+              {"name": "StringConcat x1000",  "unit": "ops/sec", "value": vary(245000)},
+          ]
+
+          with open("benchmark-action.json", "w") as f:
+              json.dump(results, f, indent=2)
+              f.write("\n")
+          print("Generated benchmark-action.json")
+          EOF
+
+      - name: Stash benchmark-action results
+        uses: strawgate/benchkit/actions/stash@main
+        with:
+          results: benchmark-action.json
+          format: benchmark-action
+          summary: true
+
+      - name: Trigger aggregate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run aggregate.yml --repo ${{ github.repository }}
+
+  bench-glob-merge:
+    name: Stash multiple files via glob
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate two separate native result files
+        run: |
+          python3 - <<'EOF'
+          import random, json
+
+          def vary(base, pct=0.05):
+              return round(base * (1 + random.uniform(-pct, pct)), 2)
+
+          # File 1: compression benchmarks
+          file1 = {
+              "benchmarks": [
+                  {"name": "Compress/gzip", "tags": {"level": "6"},
+                   "metrics": {"ns_per_op": {"value": vary(45000), "unit": "ns/op", "direction": "smaller_is_better"},
+                               "ratio": {"value": vary(0.42, 0.02), "unit": "ratio", "direction": "bigger_is_better"}}},
+                  {"name": "Compress/lz4",  "tags": {"level": "1"},
+                   "metrics": {"ns_per_op": {"value": vary(8200),  "unit": "ns/op", "direction": "smaller_is_better"},
+                               "ratio": {"value": vary(0.58, 0.02), "unit": "ratio", "direction": "bigger_is_better"}}},
+                  {"name": "Compress/zstd", "tags": {"level": "3"},
+                   "metrics": {"ns_per_op": {"value": vary(12500), "unit": "ns/op", "direction": "smaller_is_better"},
+                               "ratio": {"value": vary(0.35, 0.02), "unit": "ratio", "direction": "bigger_is_better"}}},
+              ]
+          }
+
+          # File 2: decompression benchmarks
+          file2 = {
+              "benchmarks": [
+                  {"name": "Decompress/gzip", "tags": {"level": "6"},
+                   "metrics": {"ns_per_op": {"value": vary(28000), "unit": "ns/op", "direction": "smaller_is_better"}}},
+                  {"name": "Decompress/lz4",  "tags": {"level": "1"},
+                   "metrics": {"ns_per_op": {"value": vary(3800),  "unit": "ns/op", "direction": "smaller_is_better"}}},
+                  {"name": "Decompress/zstd", "tags": {"level": "3"},
+                   "metrics": {"ns_per_op": {"value": vary(9100),  "unit": "ns/op", "direction": "smaller_is_better"}}},
+              ]
+          }
+
+          for fname, data in [("bench-compress.json", file1), ("bench-decompress.json", file2)]:
+              with open(fname, "w") as f:
+                  json.dump(data, f, indent=2)
+                  f.write("\n")
+          print("Generated bench-compress.json and bench-decompress.json")
+          EOF
+
+      - name: Stash both files using glob pattern
+        uses: strawgate/benchkit/actions/stash@main
+        with:
+          results: bench-*.json
+          format: native
+          summary: true
+
+      - name: Trigger aggregate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run aggregate.yml --repo ${{ github.repository }}

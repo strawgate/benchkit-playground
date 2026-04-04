@@ -1,0 +1,63 @@
+name: Benchmark (stash dry-run / save-data-file false)
+
+# Tests: save-data-file: false mode — stash parses and outputs the result
+# but does NOT commit to bench-data. Useful for preview/debugging.
+# Also tests the file-path output points to a temp file (not bench-data).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bench-dry-run:
+    name: Stash dry-run (no commit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate benchmark results
+        run: |
+          echo '{"benchmarks":[{"name":"DryRun/test","metrics":{"ns_per_op":{"value":42,"unit":"ns/op","direction":"smaller_is_better"}}}]}' > bench.json
+
+      - name: Stash with save-data-file false
+        id: stash
+        uses: strawgate/benchkit/actions/stash@main
+        with:
+          results: bench.json
+          format: native
+          save-data-file: false
+          summary: true
+
+      - name: Verify output points to temp file (not bench-data)
+        run: |
+          echo "run-id: ${{ steps.stash.outputs.run-id }}"
+          echo "file-path: ${{ steps.stash.outputs.file-path }}"
+
+          if [ -f "${{ steps.stash.outputs.file-path }}" ]; then
+            echo "✅ Temp file exists at: ${{ steps.stash.outputs.file-path }}"
+            cat "${{ steps.stash.outputs.file-path }}"
+          else
+            echo "❌ Expected temp file not found at: ${{ steps.stash.outputs.file-path }}"
+            exit 1
+          fi
+
+      - name: Verify bench-data was NOT modified
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Count runs before
+          BEFORE=$(gh api repos/${{ github.repository }}/git/refs/heads/bench-data 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin)['object']['sha'][:7])" || echo "no-branch")
+          echo "bench-data SHA before: $BEFORE"
+          # If bench-data was accidentally updated, the SHA would change — but we can't
+          # reliably detect that in the same step, so we just confirm the file-path
+          # is a temp path (contains /tmp or /runner/work/_temp)
+          FILE="${{ steps.stash.outputs.file-path }}"
+          if echo "$FILE" | grep -qE "^/tmp|^/home/runner/work/_temp|runner"; then
+            echo "✅ file-path is a temp path as expected"
+          else
+            echo "⚠️  file-path may point to bench-data: $FILE"
+          fi

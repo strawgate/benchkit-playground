@@ -101,12 +101,17 @@ jobs:
             runner=ubuntu-latest
             variant=default
 
-      - name: Stash results with monitor context
+      - name: Stash results
+        # NOTE: monitor-json output does NOT exist on the monitor action.
+        # The monitor action pushes raw OTLP telemetry directly to bench-data
+        # at data/telemetry/{run-id}.otlp.jsonl.gz — separately from stash.
+        # The stash 'monitor' input is for a different use-case (explicit
+        # native-format projection file), not for the monitor sidecar.
+        # Filed as benchkit issue #189.
         uses: strawgate/benchkit/actions/stash@main
         with:
           results: bench-results.json
           format: native
-          monitor: ${{ steps.monitor.outputs.monitor-json }}
           summary: true
 
       - name: Trigger aggregate

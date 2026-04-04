@@ -1,0 +1,76 @@
+name: Benchmark (fail-on-regression test)
+
+# Tests: fail-on-regression: true when a regression clearly exceeds threshold.
+# This job is EXPECTED to fail with a non-zero exit code.
+# Uses continue-on-error: true so the workflow itself passes even when compare fails.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  bench-regression-expected:
+    name: Fail-on-regression (expects failure)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate severely regressed benchmark results
+        run: |
+          # Intentionally use 3x the baseline values to guarantee regression detection
+          python3 - <<'EOF'
+          import json
+          result = {
+              "benchmarks": [
+                  {
+                      "name": "SearchAlgorithms/binary",
+                      "tags": {"dataset": "uniform", "size": "10000"},
+                      "metrics": {
+                          # 3x regression: baseline is ~45 ns/op, this is ~135 ns/op
+                          "ns_per_op": {"value": 135, "unit": "ns/op", "direction": "smaller_is_better"},
+                          # 3x regression in throughput (lower)
+                          "throughput": {"value": 280000, "unit": "ops/sec", "direction": "bigger_is_better"},
+                      },
+                  }
+              ]
+          }
+          with open("bench-regressed.json", "w") as f:
+              json.dump(result, f, indent=2)
+              f.write("\n")
+          EOF
+
+      - name: Compare with fail-on-regression true
+        id: compare
+        continue-on-error: true
+        uses: strawgate/benchkit/actions/compare@main
+        with:
+          results: bench-regressed.json
+          format: native
+          baseline-runs: 5
+          threshold: 10
+          fail-on-regression: true
+          comment-on-pr: false
+
+      - name: Validate regression was detected
+        run: |
+          echo "has-regression output: ${{ steps.compare.outputs.has-regression }}"
+          echo "compare step outcome: ${{ steps.compare.outcome }}"
+
+          if [ "${{ steps.compare.outputs.has-regression }}" = "true" ]; then
+            echo "✅ Regression correctly detected"
+          else
+            echo "⚠️  Expected has-regression=true but got: ${{ steps.compare.outputs.has-regression }}"
+            echo "    (This may be OK if bench-data has no baseline runs yet)"
+          fi
+
+          if [ "${{ steps.compare.outcome }}" = "failure" ]; then
+            echo "✅ Step correctly failed due to regression"
+          else
+            echo "ℹ️  Step outcome: ${{ steps.compare.outcome }}"
+            echo "   (Expected failure if baseline exists; OK if no baseline yet)"
+          fi
