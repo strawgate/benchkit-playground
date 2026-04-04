@@ -3,6 +3,12 @@ name: Aggregate benchmarks
 # Triggered whenever a new raw run file lands on bench-data.
 # Rebuilds all derived indexes and series.
 #
+# IMPORTANT: The push trigger only fires when bench-data is pushed using a
+# token with sufficient scope (PAT or GitHub App token). Pushes from the
+# default GITHUB_TOKEN do NOT trigger other workflows — a known GitHub Actions
+# limitation. As a workaround, each bench-* workflow dispatches this workflow
+# explicitly at the end of its job using `gh workflow run`.
+#
 # The paths filter (data/runs/**) ensures that the aggregate workflow's
 # own writes (index.json, series/**) do NOT re-trigger this workflow,
 # preventing an infinite loop.
@@ -13,6 +19,7 @@ on:
       - bench-data
     paths:
       - 'data/runs/**'
+  workflow_dispatch:
 
 permissions:
   contents: write

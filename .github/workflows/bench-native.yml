@@ -12,9 +12,7 @@ on:
 
 permissions:
   contents: write
-
-jobs:
-  bench-native:
+  actions: write
     name: Native JSON benchmark
     runs-on: ubuntu-latest
     steps:
@@ -84,3 +82,8 @@ jobs:
           results: bench-results.json
           format: native
           summary: true
+
+      - name: Trigger aggregate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run aggregate.yml --repo ${{ github.repository }}

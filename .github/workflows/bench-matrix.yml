@@ -10,9 +10,7 @@ on:
 
 permissions:
   contents: write
-
-jobs:
-  bench-variant:
+  actions: write
     name: Benchmark (${{ matrix.variant }})
     runs-on: ubuntu-latest
     strategy:
@@ -70,3 +68,9 @@ jobs:
           # the matrix key in the run-id to avoid file collisions.
           run-id: ${{ github.run_id }}-${{ github.run_attempt }}--bench-variant-${{ matrix.variant }}
           summary: true
+
+      - name: Trigger aggregate (only from one matrix variant to avoid duplicates)
+        if: matrix.variant == 'fast'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run aggregate.yml --repo ${{ github.repository }}

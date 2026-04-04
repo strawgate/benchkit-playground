@@ -10,9 +10,7 @@ on:
 
 permissions:
   contents: write
-
-jobs:
-  bench-hyperfine:
+  actions: write
     name: Hyperfine JSON benchmark
     runs-on: ubuntu-latest
     steps:
@@ -71,3 +69,8 @@ jobs:
           format: auto
           run-id: ${{ github.run_id }}-${{ github.run_attempt }}--bench-hyperfine-auto
           summary: true
+
+      - name: Trigger aggregate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run aggregate.yml --repo ${{ github.repository }}

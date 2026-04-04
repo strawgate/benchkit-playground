@@ -10,9 +10,7 @@ on:
 
 permissions:
   contents: write
-
-jobs:
-  bench-with-monitor:
+  actions: write
     name: Benchmark with OTel monitor
     runs-on: ubuntu-latest
     steps:
@@ -107,3 +105,8 @@ jobs:
           format: native
           monitor: ${{ steps.monitor.outputs.monitor-json }}
           summary: true
+
+      - name: Trigger aggregate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run aggregate.yml --repo ${{ github.repository }}

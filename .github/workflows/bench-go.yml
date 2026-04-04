@@ -10,9 +10,7 @@ on:
 
 permissions:
   contents: write
-
-jobs:
-  bench-go:
+  actions: write
     name: Go benchmark format
     runs-on: ubuntu-latest
     steps:
@@ -56,3 +54,8 @@ jobs:
           results: go-bench.txt
           format: go
           summary: true
+
+      - name: Trigger aggregate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run aggregate.yml --repo ${{ github.repository }}
