@@ -50,7 +50,7 @@ jobs:
           EOF
 
       - name: Stash Rust results
-        uses: strawgate/benchkit/actions/stash@main
+        uses: strawgate/benchkit/actions/stash@main-dist
         with:
           results: rust-bench.txt
           format: rust
@@ -109,7 +109,7 @@ jobs:
           EOF
 
       - name: Stash pytest-benchmark results
-        uses: strawgate/benchkit/actions/stash@main
+        uses: strawgate/benchkit/actions/stash@main-dist
         with:
           results: pytest-bench.json
           format: pytest-benchmark
@@ -150,7 +150,7 @@ jobs:
           EOF
 
       - name: Stash benchmark-action results
-        uses: strawgate/benchkit/actions/stash@main
+        uses: strawgate/benchkit/actions/stash@main-dist
         with:
           results: benchmark-action.json
           format: benchmark-action
@@ -210,7 +210,7 @@ jobs:
           EOF
 
       - name: Stash both files using glob pattern
-        uses: strawgate/benchkit/actions/stash@main
+        uses: strawgate/benchkit/actions/stash@main-dist
         with:
           results: bench-*.json
           format: native

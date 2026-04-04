@@ -63,7 +63,7 @@ jobs:
           VARIANT: ${{ matrix.variant }}
 
       - name: Stash results
-        uses: strawgate/benchkit/actions/stash@main
+        uses: strawgate/benchkit/actions/stash@main-dist
         with:
           results: bench-results.json
           format: native

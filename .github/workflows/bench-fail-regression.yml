@@ -47,7 +47,7 @@ jobs:
       - name: Compare with fail-on-regression true
         id: compare
         continue-on-error: true
-        uses: strawgate/benchkit/actions/compare@main
+        uses: strawgate/benchkit/actions/compare@main-dist
         with:
           results: bench-regressed.json
           format: native

@@ -21,13 +21,13 @@ jobs:
 
       - name: Start monitor
         id: monitor
-        uses: strawgate/benchkit/actions/monitor@main
+        uses: strawgate/benchkit/actions/monitor@main-dist
         with:
           scrape-interval: 5s
           metric-sets: cpu,memory,load,process
 
       - name: Emit a custom workflow metric (before benchmarks)
-        uses: strawgate/benchkit/actions/emit-metric@main
+        uses: strawgate/benchkit/actions/emit-metric@main-dist
         with:
           otlp-http-endpoint: ${{ steps.monitor.outputs.otlp-http-endpoint }}
           name: workflow_setup_ms
@@ -88,7 +88,7 @@ jobs:
           EOF
 
       - name: Emit a custom metric (after benchmarks)
-        uses: strawgate/benchkit/actions/emit-metric@main
+        uses: strawgate/benchkit/actions/emit-metric@main-dist
         with:
           otlp-http-endpoint: ${{ steps.monitor.outputs.otlp-http-endpoint }}
           name: benchmark_score
@@ -108,7 +108,7 @@ jobs:
         # The stash 'monitor' input is for a different use-case (explicit
         # native-format projection file), not for the monitor sidecar.
         # Filed as benchkit issue #189.
-        uses: strawgate/benchkit/actions/stash@main
+        uses: strawgate/benchkit/actions/stash@main-dist
         with:
           results: bench-results.json
           format: native

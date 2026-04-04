@@ -32,6 +32,6 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Aggregate
-        uses: strawgate/benchkit/actions/aggregate@main
+        uses: strawgate/benchkit/actions/aggregate@main-dist
         with:
           max-runs: 50

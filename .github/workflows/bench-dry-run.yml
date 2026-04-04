@@ -25,7 +25,7 @@ jobs:
 
       - name: Stash with save-data-file false
         id: stash
-        uses: strawgate/benchkit/actions/stash@main
+        uses: strawgate/benchkit/actions/stash@main-dist
         with:
           results: bench.json
           format: native
