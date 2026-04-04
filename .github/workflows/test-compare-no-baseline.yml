@@ -24,7 +24,7 @@ jobs:
       - name: Compare against non-existent branch
         id: compare
         continue-on-error: true
-        uses: strawgate/benchkit/actions/compare@main
+        uses: strawgate/benchkit/actions/compare@main-dist
         with:
           results: bench.json
           format: native

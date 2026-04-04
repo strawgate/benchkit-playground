@@ -68,7 +68,7 @@ jobs:
 
       - name: Compare against baseline
         id: compare
-        uses: strawgate/benchkit/actions/compare@main
+        uses: strawgate/benchkit/actions/compare@main-dist
         with:
           results: bench-results.json
           format: native

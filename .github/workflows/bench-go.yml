@@ -52,7 +52,7 @@ jobs:
           EOF
 
       - name: Stash Go benchmark results
-        uses: strawgate/benchkit/actions/stash@main
+        uses: strawgate/benchkit/actions/stash@main-dist
         with:
           results: go-bench.txt
           format: go

@@ -59,14 +59,14 @@ jobs:
           EOF
 
       - name: Stash Hyperfine results (explicit format)
-        uses: strawgate/benchkit/actions/stash@main
+        uses: strawgate/benchkit/actions/stash@main-dist
         with:
           results: hyperfine-results.json
           format: hyperfine
           summary: true
 
       - name: Stash Hyperfine results (auto-detect)
-        uses: strawgate/benchkit/actions/stash@main
+        uses: strawgate/benchkit/actions/stash@main-dist
         with:
           results: hyperfine-results.json
           format: auto

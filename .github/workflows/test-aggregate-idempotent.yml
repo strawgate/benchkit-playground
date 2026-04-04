@@ -19,13 +19,13 @@ jobs:
 
       - name: First aggregate
         id: agg1
-        uses: strawgate/benchkit/actions/aggregate@main
+        uses: strawgate/benchkit/actions/aggregate@main-dist
         with:
           max-runs: 0
 
       - name: Second aggregate (should be no-op)
         id: agg2
-        uses: strawgate/benchkit/actions/aggregate@main
+        uses: strawgate/benchkit/actions/aggregate@main-dist
         with:
           max-runs: 0
 
