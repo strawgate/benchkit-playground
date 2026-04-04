@@ -112,7 +112,7 @@ jobs:
         uses: strawgate/benchkit/actions/stash@main
         with:
           results: pytest-bench.json
-          format: pytest
+          format: pytest-benchmark
           summary: true
 
       - name: Trigger aggregate
