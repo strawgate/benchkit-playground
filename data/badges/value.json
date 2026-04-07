@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
   "label": "value",
-  "message": "134.0k ops/sec",
-  "color": "brightgreen"
+  "message": "298.20 ops/sec",
+  "color": "red"
 }

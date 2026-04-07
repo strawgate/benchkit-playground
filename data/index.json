@@ -1,6 +1,26 @@
 {
   "runs": [
     {
+      "id": "24103821559-1--bench-variant-fast",
+      "timestamp": "2026-04-07T20:51:50.494Z",
+      "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+      "ref": "refs/heads/main",
+      "benchmarks": 3,
+      "metrics": [
+        "value"
+      ]
+    },
+    {
+      "id": "24103821559-1--bench-variant-balanced",
+      "timestamp": "2026-04-07T20:51:49.822Z",
+      "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+      "ref": "refs/heads/main",
+      "benchmarks": 3,
+      "metrics": [
+        "value"
+      ]
+    },
+    {
       "id": "24103702593-1--bench-rust",
       "timestamp": "2026-04-07T20:48:56.147Z",
       "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
