@@ -3,10 +3,11 @@ name: "E2E: Phase-decorating monitor mode"
 # End-to-end test for the two-collector phase-decorating topology.
 # Validates:
 #   1. Monitor starts with enable-phases: true (two collectors)
-#   2. Metrics emitted during each phase carry benchkit.phase resource attr
-#   3. Phase transitions via benchkit-set-phase CLI work
+#   2. Phase transitions via benchkit-set-phase CLI work
+#   3. Metrics emitted during each phase carry correct benchkit.phase resource attr
 #   4. Run ID is tagged on all metrics
-#   5. Clean shutdown with both collectors
+#   5. Clean shutdown preserves all phase data
+#   6. Non-phase baseline mode is unaffected
 
 on:
   workflow_dispatch:
@@ -15,6 +16,9 @@ permissions:
   contents: write
 
 jobs:
+  # ═══════════════════════════════════════════════════════════════════
+  # Job 1: Full phase lifecycle with telemetry validation
+  # ═══════════════════════════════════════════════════════════════════
   phase-mode-e2e:
     name: Phase mode E2E
     runs-on: ubuntu-latest
@@ -36,24 +40,26 @@ jobs:
           which benchkit-set-phase && echo "✅ Found" || { echo "❌ Not found"; exit 1; }
 
           echo ""
-          echo "=== Verify initial phase state file ==="
+          echo "=== Verify initial phase state ==="
           cat "$RUNNER_TEMP/.benchkit-phase.json" | python3 -m json.tool
 
           echo ""
           echo "=== Monitor state (phase fields) ==="
-          python3 -c "
+          python3 << 'PYEOF'
           import json
-          state = json.load(open('$RUNNER_TEMP/.benchkit-otel.state.json'))
-          print(f'enablePhases: {state.get(\"enablePhases\")}')
-          print(f'phaseCollectorPid: {state.get(\"phaseCollectorPid\")}')
-          print(f'binaryPath: {state.get(\"binaryPath\")}')
-          print(f'phaseConfigPath: {state.get(\"phaseConfigPath\")}')
-          print(f'phaseOutputPath: {state.get(\"phaseOutputPath\")}')
-          "
+          state = json.load(open("$RUNNER_TEMP/.benchkit-otel.state.json"))
+          for k in ["enablePhases", "phaseCollectorPid", "binaryPath", "phaseConfigPath", "phaseOutputPath"]:
+              print(f"  {k}: {state.get(k)}")
+          assert state.get("enablePhases") == True, "enablePhases must be True"
+          print("✅ State looks good")
+          PYEOF
 
       # ── Phase 1: warmup ─────────────────────────────────────────
       - name: Set phase → warmup
         run: benchkit-set-phase --phase warmup --scenario smoke --series baseline
+
+      - name: Wait for warmup collector flush
+        run: sleep 3
 
       - name: Emit metric during warmup
         uses: strawgate/benchkit/actions/emit-metric@pr/318-dist
@@ -66,12 +72,12 @@ jobs:
           series: baseline
           direction: smaller_is_better
 
-      - name: Warmup workload (3s CPU burn)
+      - name: Warmup workload (5s)
         run: |
           python3 -c "
           import time, math
           start = time.time()
-          while time.time() - start < 3:
+          while time.time() - start < 5:
               sum(math.sqrt(i) for i in range(10000))
           print(f'Warmup done in {time.time()-start:.1f}s')
           "
@@ -79,6 +85,9 @@ jobs:
       # ── Phase 2: measure ────────────────────────────────────────
       - name: Set phase → measure
         run: benchkit-set-phase --phase measure --scenario smoke --series baseline
+
+      - name: Wait for measure collector flush
+        run: sleep 3
 
       - name: Emit metric during measure
         uses: strawgate/benchkit/actions/emit-metric@pr/318-dist
@@ -91,12 +100,12 @@ jobs:
           series: baseline
           direction: bigger_is_better
 
-      - name: Measure workload (5s CPU burn)
+      - name: Measure workload (8s)
         run: |
           python3 -c "
           import time, math
           start = time.time()
-          while time.time() - start < 5:
+          while time.time() - start < 8:
               sum(math.sqrt(i) for i in range(10000))
           print(f'Measure done in {time.time()-start:.1f}s')
           "
@@ -104,6 +113,9 @@ jobs:
       # ── Phase 3: cooldown ───────────────────────────────────────
       - name: Set phase → cooldown
         run: benchkit-set-phase --phase cooldown --scenario smoke --series baseline
+
+      - name: Wait for cooldown collector flush
+        run: sleep 3
 
       - name: Emit metric during cooldown
         uses: strawgate/benchkit/actions/emit-metric@pr/318-dist
@@ -116,52 +128,208 @@ jobs:
           series: baseline
           direction: smaller_is_better
 
-      - name: Brief cooldown (2s)
-        run: sleep 2
+      - name: Cooldown (5s)
+        run: sleep 5
 
-      # ── Validate state before shutdown ──────────────────────────
+      # ── Pre-shutdown telemetry validation ───────────────────────
+      - name: Validate telemetry before shutdown
+        run: |
+          OUTPUT="$RUNNER_TEMP/benchkit-telemetry.otlp.jsonl"
+          echo "=== Checking telemetry output file ==="
+          if [ ! -f "$OUTPUT" ]; then
+            echo "❌ Telemetry output file not found!"
+            ls -la "$RUNNER_TEMP"/benchkit-* 2>/dev/null
+            exit 1
+          fi
+
+          python3 << PYEOF
+          import json, sys
+
+          with open("$OUTPUT") as f:
+              lines = [json.loads(l) for l in f if l.strip()]
+
+          print(f"Total JSONL lines: {len(lines)}")
+          print()
+
+          # Collect all metrics grouped by phase
+          phase_metrics = {}
+          phase_run_ids = set()
+          for i, line in enumerate(lines):
+              for rm in line.get("resourceMetrics", []):
+                  attrs = {a["key"]: list(a["value"].values())[0]
+                           for a in rm.get("resource", {}).get("attributes", [])}
+                  phase = attrs.get("benchkit.phase", "MISSING")
+                  run_id = attrs.get("benchkit.run_id", "MISSING")
+                  phase_run_ids.add(run_id)
+
+                  if phase not in phase_metrics:
+                      phase_metrics[phase] = {"count": 0, "names": set()}
+                  for sm in rm.get("scopeMetrics", []):
+                      for m in sm.get("metrics", []):
+                          phase_metrics[phase]["count"] += 1
+                          phase_metrics[phase]["names"].add(m["name"])
+
+          print("=== Metrics by phase ===")
+          for phase, data in sorted(phase_metrics.items()):
+              print(f"  {phase}: {data['count']} metrics — {sorted(data['names'])}")
+
+          print()
+          ok = True
+
+          # Validate: all three phases present
+          expected_phases = {"warmup", "measure", "cooldown"}
+          found_phases = set(phase_metrics.keys())
+          missing = expected_phases - found_phases
+          if missing:
+              print(f"❌ Missing phases: {missing}")
+              ok = False
+          else:
+              print(f"✅ All expected phases found: {sorted(found_phases)}")
+
+          # Validate: each phase has its emit-metric
+          for phase, expected_metric in [("warmup", "e2e_warmup_metric"),
+                                          ("measure", "e2e_measure_metric"),
+                                          ("cooldown", "e2e_cooldown_metric")]:
+              if phase in phase_metrics:
+                  if expected_metric in phase_metrics[phase]["names"]:
+                      print(f"✅ {phase} has {expected_metric}")
+                  else:
+                      print(f"❌ {phase} missing {expected_metric} (found: {phase_metrics[phase]['names']})")
+                      ok = False
+
+          # Validate: consistent run_id
+          if len(phase_run_ids) == 1:
+              print(f"✅ Consistent run_id: {phase_run_ids.pop()}")
+          else:
+              print(f"❌ Multiple run_ids found: {phase_run_ids}")
+              ok = False
+
+          # Validate: hostmetrics present in at least one phase
+          all_metric_names = set()
+          for data in phase_metrics.values():
+              all_metric_names |= data["names"]
+          host_metrics = [n for n in all_metric_names if n.startswith("system.")]
+          if host_metrics:
+              print(f"✅ Hostmetrics present: {sorted(host_metrics)[:5]}...")
+          else:
+              print(f"⚠ No hostmetrics found (may need longer phases)")
+
+          if not ok:
+              print()
+              print("❌ VALIDATION FAILED")
+              sys.exit(1)
+          print()
+          print("✅ ALL TELEMETRY VALIDATION PASSED")
+          PYEOF
+
       - name: Final state inspection
         run: |
           echo "=== Final phase state ==="
           cat "$RUNNER_TEMP/.benchkit-phase.json" | python3 -m json.tool
 
           echo ""
-          echo "=== Final monitor state ==="
-          python3 -c "
-          import json
-          state = json.load(open('$RUNNER_TEMP/.benchkit-otel.state.json'))
-          for k, v in sorted(state.items()):
-              print(f'  {k}: {v}')
-          "
-
-          echo ""
-          echo "=== Check both collector PIDs are running ==="
-          OTEL_STATE='$RUNNER_TEMP/.benchkit-otel.state.json'
-          python3 -c "
-          import json, os, signal
-          state = json.load(open('$RUNNER_TEMP/.benchkit-otel.state.json'))
-          c1_pid = state.get('collectorPid')
-          c2_pid = state.get('phaseCollectorPid')
-          print(f'Collector 1 PID: {c1_pid}')
-          print(f'Collector 2 PID: {c2_pid}')
-          # Check if processes exist
-          for name, pid in [('C1', c1_pid), ('C2', c2_pid)]:
-              if pid:
+          echo "=== Check collectors running ==="
+          python3 << 'PYEOF'
+          import json, os
+          state = json.load(open("$RUNNER_TEMP/.benchkit-otel.state.json"))
+          pid = state.get("pid")
+          c2_pid = state.get("phaseCollectorPid")
+          for name, p in [("C1 (upstream)", pid), ("C2 (phase)", c2_pid)]:
+              if p:
                   try:
-                      os.kill(pid, 0)
-                      print(f'  ✅ {name} (PID {pid}) is running')
+                      os.kill(p, 0)
+                      print(f"  ✅ {name} PID {p} is running")
                   except OSError:
-                      print(f'  ❌ {name} (PID {pid}) is NOT running')
-          "
+                      print(f"  ❌ {name} PID {p} is NOT running")
+              else:
+                  print(f"  ⚠ {name} PID not in state")
+          PYEOF
 
-      # The monitor post step runs automatically and:
-      # 1. Stops Collector 1 (upstream)
-      # 2. Waits 2s for queue drain
-      # 3. Stops Collector 2 (phase-decorating)
-      # 4. Filters process metrics from output
-      # 5. Pushes telemetry JSONL to bench-data branch
+  # ═══════════════════════════════════════════════════════════════════
+  # Job 2: Rapid phase transitions (stress test)
+  # ═══════════════════════════════════════════════════════════════════
+  rapid-phase-transitions:
+    name: Rapid phase transitions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-  # ── Non-phase baseline: ensure enable-phases: false still works ─
+      - name: Start monitor (phase mode)
+        id: monitor
+        uses: strawgate/benchkit/actions/monitor@pr/318-dist
+        with:
+          scrape-interval: 5s
+          metric-sets: cpu,memory
+          enable-phases: "true"
+
+      - name: Rapid phase cycling
+        env:
+          OTLP_HTTP: ${{ steps.monitor.outputs.otlp-http-endpoint }}
+        run: |
+          set -e
+          for phase in prep warmup1 measure1 cooldown1 warmup2 measure2 cooldown2 teardown; do
+            echo "--- Setting phase: $phase ---"
+            benchkit-set-phase --phase "$phase"
+
+            # Emit a metric immediately after each phase change
+            curl -s -X POST "${OTLP_HTTP}/v1/metrics" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"resourceMetrics\": [{
+                  \"resource\": {},
+                  \"scopeMetrics\": [{
+                    \"scope\": {\"name\": \"e2e-rapid\"},
+                    \"metrics\": [{
+                      \"name\": \"rapid_${phase}_marker\",
+                      \"gauge\": {
+                        \"dataPoints\": [{
+                          \"asInt\": \"1\",
+                          \"timeUnixNano\": \"$(date +%s)000000000\"
+                        }]
+                      }
+                    }]
+                  }]
+                }]
+              }" || echo "  ⚠ emit failed for $phase (may be expected during restart)"
+            sleep 1
+          done
+          echo "✅ Completed 8 rapid phase transitions"
+
+      - name: Wait for final flush
+        run: sleep 8
+
+      - name: Validate rapid phase data
+        run: |
+          OUTPUT="$RUNNER_TEMP/benchkit-telemetry.otlp.jsonl"
+          python3 << PYEOF
+          import json, sys
+
+          with open("$OUTPUT") as f:
+              lines = [json.loads(l) for l in f if l.strip()]
+
+          phases_seen = set()
+          for line in lines:
+              for rm in line.get("resourceMetrics", []):
+                  attrs = {a["key"]: list(a["value"].values())[0]
+                           for a in rm.get("resource", {}).get("attributes", [])}
+                  phase = attrs.get("benchkit.phase", "MISSING")
+                  phases_seen.add(phase)
+
+          print(f"Phases found in telemetry: {sorted(phases_seen)}")
+          print(f"Total JSONL lines: {len(lines)}")
+
+          # At minimum the last few phases should be present
+          # (rapid transitions may lose some due to restart timing)
+          if len(phases_seen) >= 3:
+              print(f"✅ At least 3 phases captured ({len(phases_seen)} total)")
+          else:
+              print(f"❌ Only {len(phases_seen)} phases captured, expected >= 3")
+              sys.exit(1)
+          PYEOF
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Job 3: Non-phase baseline (regression check)
+  # ═══════════════════════════════════════════════════════════════════
   baseline-no-phases:
     name: Baseline (no phases)
     runs-on: ubuntu-latest
@@ -184,7 +352,7 @@ jobs:
           unit: score
           direction: bigger_is_better
 
-      - name: Brief workload
+      - name: Brief workload (5s)
         run: sleep 5
 
       - name: Verify no phase infrastructure
@@ -205,3 +373,114 @@ jobs:
           else
             echo "✅ benchkit-set-phase not on PATH (correct)"
           fi
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Job 4: set-phase GitHub Action (not CLI)
+  # ═══════════════════════════════════════════════════════════════════
+  set-phase-action:
+    name: set-phase action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start monitor (phase mode)
+        id: monitor
+        uses: strawgate/benchkit/actions/monitor@pr/318-dist
+        with:
+          scrape-interval: 5s
+          metric-sets: cpu
+          enable-phases: "true"
+
+      - name: Set phase via action → warmup
+        uses: strawgate/benchkit/actions/set-phase@pr/318-dist
+        with:
+          phase: warmup
+          scenario: action-test
+          series: v1
+
+      - name: Emit metric during warmup
+        uses: strawgate/benchkit/actions/emit-metric@pr/318-dist
+        with:
+          otlp-http-endpoint: ${{ steps.monitor.outputs.otlp-http-endpoint }}
+          name: e2e_action_warmup
+          value: 50
+          unit: ms
+          direction: smaller_is_better
+
+      - name: Wait for flush
+        run: sleep 8
+
+      - name: Set phase via action → measure
+        uses: strawgate/benchkit/actions/set-phase@pr/318-dist
+        with:
+          phase: measure
+          scenario: action-test
+          series: v1
+
+      - name: Emit metric during measure
+        uses: strawgate/benchkit/actions/emit-metric@pr/318-dist
+        with:
+          otlp-http-endpoint: ${{ steps.monitor.outputs.otlp-http-endpoint }}
+          name: e2e_action_measure
+          value: 99
+          unit: ops/sec
+          direction: bigger_is_better
+
+      - name: Wait for flush
+        run: sleep 8
+
+      - name: Validate set-phase action telemetry
+        run: |
+          OUTPUT="$RUNNER_TEMP/benchkit-telemetry.otlp.jsonl"
+          python3 << PYEOF
+          import json, sys
+
+          with open("$OUTPUT") as f:
+              lines = [json.loads(l) for l in f if l.strip()]
+
+          phase_metrics = {}
+          for line in lines:
+              for rm in line.get("resourceMetrics", []):
+                  attrs = {a["key"]: list(a["value"].values())[0]
+                           for a in rm.get("resource", {}).get("attributes", [])}
+                  phase = attrs.get("benchkit.phase", "MISSING")
+                  scenario = attrs.get("benchkit.scenario", "-")
+                  series = attrs.get("benchkit.series", "-")
+
+                  if phase not in phase_metrics:
+                      phase_metrics[phase] = {"names": set(), "scenario": scenario, "series": series}
+                  for sm in rm.get("scopeMetrics", []):
+                      for m in sm.get("metrics", []):
+                          phase_metrics[phase]["names"].add(m["name"])
+
+          print("=== Phase metrics from set-phase action ===")
+          ok = True
+          for phase, data in sorted(phase_metrics.items()):
+              print(f"  {phase}: metrics={sorted(data['names'])} scenario={data['scenario']} series={data['series']}")
+
+          # Validate both phases present
+          if "warmup" in phase_metrics and "measure" in phase_metrics:
+              print("✅ Both warmup and measure phases found")
+          else:
+              print(f"❌ Expected warmup+measure, got: {list(phase_metrics.keys())}")
+              ok = False
+
+          # Validate scenario/series decoration
+          for phase in ["warmup", "measure"]:
+              if phase in phase_metrics:
+                  if phase_metrics[phase]["scenario"] == "action-test":
+                      print(f"✅ {phase} scenario=action-test")
+                  else:
+                      print(f"❌ {phase} scenario={phase_metrics[phase]['scenario']} (expected action-test)")
+                      ok = False
+                  if phase_metrics[phase]["series"] == "v1":
+                      print(f"✅ {phase} series=v1")
+                  else:
+                      print(f"❌ {phase} series={phase_metrics[phase]['series']} (expected v1)")
+                      ok = False
+
+          if not ok:
+              sys.exit(1)
+          print()
+          print("✅ SET-PHASE ACTION VALIDATION PASSED")
+          PYEOF
