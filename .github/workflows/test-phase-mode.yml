@@ -292,12 +292,12 @@ jobs:
                   }]
                 }]
               }" || echo "  ⚠ emit failed for $phase (may be expected during restart)"
-            sleep 1
+            sleep 3
           done
           echo "✅ Completed 8 rapid phase transitions"
 
       - name: Wait for final flush
-        run: sleep 8
+        run: sleep 10
 
       - name: Validate rapid phase data
         run: |
