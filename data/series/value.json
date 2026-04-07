@@ -10,6 +10,12 @@
           "value": 11960.39,
           "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
           "run_id": "24103306261-1--bench-benchmark-action"
+        },
+        {
+          "timestamp": "2026-04-07T20:48:55.505Z",
+          "value": 12002.04,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103702593-1--bench-benchmark-action"
         }
       ]
     },
@@ -20,6 +26,12 @@
           "value": 99773.05,
           "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
           "run_id": "24103306261-1--bench-benchmark-action"
+        },
+        {
+          "timestamp": "2026-04-07T20:48:55.505Z",
+          "value": 96580.38,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103702593-1--bench-benchmark-action"
         }
       ]
     },
@@ -30,6 +42,12 @@
           "value": 84464.59,
           "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
           "run_id": "24103306261-1--bench-benchmark-action"
+        },
+        {
+          "timestamp": "2026-04-07T20:48:55.505Z",
+          "value": 86914.19,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103702593-1--bench-benchmark-action"
         }
       ]
     },
@@ -40,6 +58,12 @@
           "value": 14949.13,
           "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
           "run_id": "24103306261-1--bench-benchmark-action"
+        },
+        {
+          "timestamp": "2026-04-07T20:48:55.505Z",
+          "value": 15056.35,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103702593-1--bench-benchmark-action"
         }
       ]
     },
@@ -50,6 +74,12 @@
           "value": 339497.76,
           "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
           "run_id": "24103306261-1--bench-benchmark-action"
+        },
+        {
+          "timestamp": "2026-04-07T20:48:55.505Z",
+          "value": 349261.93,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103702593-1--bench-benchmark-action"
         }
       ]
     },
@@ -60,6 +90,12 @@
           "value": 241771.56,
           "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
           "run_id": "24103306261-1--bench-benchmark-action"
+        },
+        {
+          "timestamp": "2026-04-07T20:48:55.505Z",
+          "value": 243936.36,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103702593-1--bench-benchmark-action"
         }
       ]
     },

@@ -36,6 +36,12 @@
     "latestTimestamp": "2026-04-07T20:45:46.538Z"
   },
   {
+    "metric": "ns_per_iter",
+    "latestSeriesCount": 6,
+    "latestRunId": "24103702593-1--bench-rust",
+    "latestTimestamp": "2026-04-07T20:48:56.147Z"
+  },
+  {
     "metric": "ns_per_op",
     "latestSeriesCount": 10,
     "latestRunId": "24103467579-1--bench-go",
@@ -62,7 +68,7 @@
   {
     "metric": "value",
     "latestSeriesCount": 28,
-    "latestRunId": "24103576653-1--bench-variant-balanced",
-    "latestTimestamp": "2026-04-07T20:45:52.631Z"
+    "latestRunId": "24103702593-1--bench-benchmark-action",
+    "latestTimestamp": "2026-04-07T20:48:55.505Z"
   }
 ]
