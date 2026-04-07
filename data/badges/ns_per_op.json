@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
   "label": "ns per op",
-  "message": "29.7k ns/op",
+  "message": "29.2k ns/op",
   "color": "blue"
 }

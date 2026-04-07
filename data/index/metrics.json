@@ -2,14 +2,14 @@
   {
     "metric": "allocs_per_op",
     "latestSeriesCount": 10,
-    "latestRunId": "24103306299-1--bench-go",
-    "latestTimestamp": "2026-04-07T20:39:21.640Z"
+    "latestRunId": "24103467579-1--bench-go",
+    "latestTimestamp": "2026-04-07T20:43:17.777Z"
   },
   {
     "metric": "bytes_per_op",
     "latestSeriesCount": 10,
-    "latestRunId": "24103306299-1--bench-go",
-    "latestTimestamp": "2026-04-07T20:39:21.640Z"
+    "latestRunId": "24103467579-1--bench-go",
+    "latestTimestamp": "2026-04-07T20:43:17.777Z"
   },
   {
     "metric": "max",
@@ -38,8 +38,8 @@
   {
     "metric": "ns_per_op",
     "latestSeriesCount": 10,
-    "latestRunId": "24103306299-1--bench-go",
-    "latestTimestamp": "2026-04-07T20:39:21.640Z"
+    "latestRunId": "24103467579-1--bench-go",
+    "latestTimestamp": "2026-04-07T20:43:17.777Z"
   },
   {
     "metric": "stddev",
@@ -50,7 +50,7 @@
   {
     "metric": "value",
     "latestSeriesCount": 19,
-    "latestRunId": "24103306280-1--bench-variant-balanced",
-    "latestTimestamp": "2026-04-07T20:39:22.444Z"
+    "latestRunId": "24103467630-1--bench-native",
+    "latestTimestamp": "2026-04-07T20:43:16.721Z"
   }
 ]

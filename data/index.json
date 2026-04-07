@@ -1,6 +1,48 @@
 {
   "runs": [
     {
+      "id": "24103467579-1--bench-go",
+      "timestamp": "2026-04-07T20:43:17.777Z",
+      "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+      "ref": "refs/heads/main",
+      "benchmarks": 10,
+      "metrics": [
+        "allocs_per_op",
+        "bytes_per_op",
+        "ns_per_op"
+      ]
+    },
+    {
+      "id": "24103467630-1--bench-native",
+      "timestamp": "2026-04-07T20:43:16.721Z",
+      "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+      "ref": "refs/heads/main",
+      "benchmarks": 10,
+      "metrics": [
+        "value"
+      ]
+    },
+    {
+      "id": "24103467559-1--bench-variant-balanced",
+      "timestamp": "2026-04-07T20:43:16.513Z",
+      "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+      "ref": "refs/heads/main",
+      "benchmarks": 3,
+      "metrics": [
+        "value"
+      ]
+    },
+    {
+      "id": "24103467559-1--bench-variant-fast",
+      "timestamp": "2026-04-07T20:43:15.979Z",
+      "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+      "ref": "refs/heads/main",
+      "benchmarks": 3,
+      "metrics": [
+        "value"
+      ]
+    },
+    {
       "id": "24103306271-1--bench-hyperfine-auto",
       "timestamp": "2026-04-07T20:39:26.257Z",
       "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
