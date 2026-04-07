@@ -1,0 +1,307 @@
+{
+  "run": {
+    "id": "24103306299-1--bench-go",
+    "timestamp": "2026-04-07T20:39:21.640Z",
+    "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+    "ref": "refs/heads/main",
+    "benchmarks": 10,
+    "metrics": [
+      "allocs_per_op",
+      "bytes_per_op",
+      "ns_per_op"
+    ]
+  },
+  "metricSnapshots": [
+    {
+      "metric": "allocs_per_op",
+      "unit": "allocs/op",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "BenchmarkParseSmall [procs=8]",
+          "value": 12,
+          "unit": "allocs/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkParseMedium [procs=8]",
+          "value": 48,
+          "unit": "allocs/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkParseLarge [procs=8]",
+          "value": 192,
+          "unit": "allocs/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkParseJSON [procs=8]",
+          "value": 24,
+          "unit": "allocs/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkParseXML [procs=8]",
+          "value": 96,
+          "unit": "allocs/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkEncodeSmall [procs=8]",
+          "value": 8,
+          "unit": "allocs/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkEncodeMedium [procs=8]",
+          "value": 32,
+          "unit": "allocs/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkEncodeLarge [procs=8]",
+          "value": 128,
+          "unit": "allocs/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkRoundtrip/json [procs=8]",
+          "value": 72,
+          "unit": "allocs/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkRoundtrip/xml [procs=8]",
+          "value": 288,
+          "unit": "allocs/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        }
+      ]
+    },
+    {
+      "metric": "bytes_per_op",
+      "unit": "B/op",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "BenchmarkParseSmall [procs=8]",
+          "value": 1030,
+          "unit": "B/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkParseMedium [procs=8]",
+          "value": 4039,
+          "unit": "B/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkParseLarge [procs=8]",
+          "value": 16195,
+          "unit": "B/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkParseJSON [procs=8]",
+          "value": 2045,
+          "unit": "B/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkParseXML [procs=8]",
+          "value": 8216,
+          "unit": "B/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkEncodeSmall [procs=8]",
+          "value": 513,
+          "unit": "B/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkEncodeMedium [procs=8]",
+          "value": 2063,
+          "unit": "B/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkEncodeLarge [procs=8]",
+          "value": 8094,
+          "unit": "B/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkRoundtrip/json [procs=8]",
+          "value": 6259,
+          "unit": "B/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkRoundtrip/xml [procs=8]",
+          "value": 24102,
+          "unit": "B/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        }
+      ]
+    },
+    {
+      "metric": "ns_per_op",
+      "unit": "ns/op",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "BenchmarkParseSmall [procs=8]",
+          "value": 2324,
+          "unit": "ns/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkParseMedium [procs=8]",
+          "value": 12569,
+          "unit": "ns/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkParseLarge [procs=8]",
+          "value": 126927,
+          "unit": "ns/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkParseJSON [procs=8]",
+          "value": 5936,
+          "unit": "ns/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkParseXML [procs=8]",
+          "value": 19842,
+          "unit": "ns/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkEncodeSmall [procs=8]",
+          "value": 1593,
+          "unit": "ns/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkEncodeMedium [procs=8]",
+          "value": 4399,
+          "unit": "ns/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkEncodeLarge [procs=8]",
+          "value": 42103,
+          "unit": "ns/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkRoundtrip/json [procs=8]",
+          "value": 16800,
+          "unit": "ns/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        },
+        {
+          "name": "BenchmarkRoundtrip/xml [procs=8]",
+          "value": 64069,
+          "unit": "ns/op",
+          "direction": "smaller_is_better",
+          "tags": {
+            "procs": "8"
+          }
+        }
+      ]
+    }
+  ]
+}

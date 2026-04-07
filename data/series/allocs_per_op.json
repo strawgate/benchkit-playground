@@ -1,0 +1,137 @@
+{
+  "metric": "allocs_per_op",
+  "unit": "allocs/op",
+  "direction": "smaller_is_better",
+  "series": {
+    "BenchmarkParseSmall [procs=8]": {
+      "tags": {
+        "procs": "8"
+      },
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.640Z",
+          "value": 12,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306299-1--bench-go"
+        }
+      ]
+    },
+    "BenchmarkParseMedium [procs=8]": {
+      "tags": {
+        "procs": "8"
+      },
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.640Z",
+          "value": 48,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306299-1--bench-go"
+        }
+      ]
+    },
+    "BenchmarkParseLarge [procs=8]": {
+      "tags": {
+        "procs": "8"
+      },
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.640Z",
+          "value": 192,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306299-1--bench-go"
+        }
+      ]
+    },
+    "BenchmarkParseJSON [procs=8]": {
+      "tags": {
+        "procs": "8"
+      },
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.640Z",
+          "value": 24,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306299-1--bench-go"
+        }
+      ]
+    },
+    "BenchmarkParseXML [procs=8]": {
+      "tags": {
+        "procs": "8"
+      },
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.640Z",
+          "value": 96,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306299-1--bench-go"
+        }
+      ]
+    },
+    "BenchmarkEncodeSmall [procs=8]": {
+      "tags": {
+        "procs": "8"
+      },
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.640Z",
+          "value": 8,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306299-1--bench-go"
+        }
+      ]
+    },
+    "BenchmarkEncodeMedium [procs=8]": {
+      "tags": {
+        "procs": "8"
+      },
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.640Z",
+          "value": 32,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306299-1--bench-go"
+        }
+      ]
+    },
+    "BenchmarkEncodeLarge [procs=8]": {
+      "tags": {
+        "procs": "8"
+      },
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.640Z",
+          "value": 128,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306299-1--bench-go"
+        }
+      ]
+    },
+    "BenchmarkRoundtrip/json [procs=8]": {
+      "tags": {
+        "procs": "8"
+      },
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.640Z",
+          "value": 72,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306299-1--bench-go"
+        }
+      ]
+    },
+    "BenchmarkRoundtrip/xml [procs=8]": {
+      "tags": {
+        "procs": "8"
+      },
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.640Z",
+          "value": 288,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306299-1--bench-go"
+        }
+      ]
+    }
+  }
+}

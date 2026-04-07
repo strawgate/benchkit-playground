@@ -1,0 +1,71 @@
+{
+  "metric": "max",
+  "unit": "s",
+  "direction": "smaller_is_better",
+  "series": {
+    "sort /etc/passwd": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.737Z",
+          "value": 0,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306271-1--bench-hyperfine"
+        },
+        {
+          "timestamp": "2026-04-07T20:39:26.257Z",
+          "value": 0,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306271-1--bench-hyperfine-auto"
+        }
+      ]
+    },
+    "cat /etc/passwd": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.737Z",
+          "value": 0,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306271-1--bench-hyperfine"
+        },
+        {
+          "timestamp": "2026-04-07T20:39:26.257Z",
+          "value": 0,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306271-1--bench-hyperfine-auto"
+        }
+      ]
+    },
+    "wc -l /etc/passwd": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.737Z",
+          "value": 0,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306271-1--bench-hyperfine"
+        },
+        {
+          "timestamp": "2026-04-07T20:39:26.257Z",
+          "value": 0,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306271-1--bench-hyperfine-auto"
+        }
+      ]
+    },
+    "grep root /etc/passwd": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.737Z",
+          "value": 0,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306271-1--bench-hyperfine"
+        },
+        {
+          "timestamp": "2026-04-07T20:39:26.257Z",
+          "value": 0,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306271-1--bench-hyperfine-auto"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "metric": "allocs_per_op",
+    "latestSeriesCount": 10,
+    "latestRunId": "24103306299-1--bench-go",
+    "latestTimestamp": "2026-04-07T20:39:21.640Z"
+  },
+  {
+    "metric": "bytes_per_op",
+    "latestSeriesCount": 10,
+    "latestRunId": "24103306299-1--bench-go",
+    "latestTimestamp": "2026-04-07T20:39:21.640Z"
+  },
+  {
+    "metric": "max",
+    "latestSeriesCount": 4,
+    "latestRunId": "24103306271-1--bench-hyperfine-auto",
+    "latestTimestamp": "2026-04-07T20:39:26.257Z"
+  },
+  {
+    "metric": "mean",
+    "latestSeriesCount": 4,
+    "latestRunId": "24103306271-1--bench-hyperfine-auto",
+    "latestTimestamp": "2026-04-07T20:39:26.257Z"
+  },
+  {
+    "metric": "median",
+    "latestSeriesCount": 4,
+    "latestRunId": "24103306271-1--bench-hyperfine-auto",
+    "latestTimestamp": "2026-04-07T20:39:26.257Z"
+  },
+  {
+    "metric": "min",
+    "latestSeriesCount": 4,
+    "latestRunId": "24103306271-1--bench-hyperfine-auto",
+    "latestTimestamp": "2026-04-07T20:39:26.257Z"
+  },
+  {
+    "metric": "ns_per_op",
+    "latestSeriesCount": 10,
+    "latestRunId": "24103306299-1--bench-go",
+    "latestTimestamp": "2026-04-07T20:39:21.640Z"
+  },
+  {
+    "metric": "stddev",
+    "latestSeriesCount": 4,
+    "latestRunId": "24103306271-1--bench-hyperfine-auto",
+    "latestTimestamp": "2026-04-07T20:39:26.257Z"
+  },
+  {
+    "metric": "value",
+    "latestSeriesCount": 19,
+    "latestRunId": "24103306280-1--bench-variant-balanced",
+    "latestTimestamp": "2026-04-07T20:39:22.444Z"
+  }
+]

@@ -1,0 +1,39 @@
+{
+  "run": {
+    "id": "24103306280-1--bench-variant-balanced",
+    "timestamp": "2026-04-07T20:39:22.444Z",
+    "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+    "ref": "refs/heads/main",
+    "benchmarks": 3,
+    "metrics": [
+      "value"
+    ]
+  },
+  "metricSnapshots": [
+    {
+      "metric": "value",
+      "unit": "ns/op",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "SolverAlgorithm",
+          "value": 2373.932,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "SolverAlgorithm/accuracy",
+          "value": 0.903,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "SolverAlgorithm/memory_mb",
+          "value": 45.755,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        }
+      ]
+    }
+  ]
+}

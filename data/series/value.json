@@ -1,0 +1,197 @@
+{
+  "metric": "value",
+  "unit": "ops/sec",
+  "direction": "bigger_is_better",
+  "series": {
+    "FibonacciRecursive": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:20.220Z",
+          "value": 11960.39,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306261-1--bench-benchmark-action"
+        }
+      ]
+    },
+    "FibonacciIterative": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:20.220Z",
+          "value": 99773.05,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306261-1--bench-benchmark-action"
+        }
+      ]
+    },
+    "FibonacciMemoized": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:20.220Z",
+          "value": 84464.59,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306261-1--bench-benchmark-action"
+        }
+      ]
+    },
+    "MatrixMultiply 100x": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:20.220Z",
+          "value": 14949.13,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306261-1--bench-benchmark-action"
+        }
+      ]
+    },
+    "MatrixMultiply 500x": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:20.220Z",
+          "value": 339497.76,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306261-1--bench-benchmark-action"
+        }
+      ]
+    },
+    "StringConcat x1000": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:20.220Z",
+          "value": 241771.56,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306261-1--bench-benchmark-action"
+        }
+      ]
+    },
+    "SearchAlgorithms/linear": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.087Z",
+          "value": 257,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306285-1--bench-native"
+        }
+      ]
+    },
+    "SearchAlgorithms/linear/throughput": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.087Z",
+          "value": 124879,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306285-1--bench-native"
+        }
+      ]
+    },
+    "SearchAlgorithms/binary": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.087Z",
+          "value": 44,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306285-1--bench-native"
+        }
+      ]
+    },
+    "SearchAlgorithms/binary/throughput": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.087Z",
+          "value": 870500,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306285-1--bench-native"
+        }
+      ]
+    },
+    "SearchAlgorithms/hash": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.087Z",
+          "value": 12,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306285-1--bench-native"
+        }
+      ]
+    },
+    "SearchAlgorithms/hash/throughput": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.087Z",
+          "value": 3340344,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306285-1--bench-native"
+        }
+      ]
+    },
+    "DataStructures/btree-insert": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.087Z",
+          "value": 932,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306285-1--bench-native"
+        }
+      ]
+    },
+    "DataStructures/btree-insert/bytes_per_op": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.087Z",
+          "value": 128,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306285-1--bench-native"
+        }
+      ]
+    },
+    "DataStructures/btree-delete": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.087Z",
+          "value": 348,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306285-1--bench-native"
+        }
+      ]
+    },
+    "DataStructures/btree-lookup": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:21.087Z",
+          "value": 76,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306285-1--bench-native"
+        }
+      ]
+    },
+    "SolverAlgorithm": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:22.444Z",
+          "value": 2373.93,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306280-1--bench-variant-balanced"
+        }
+      ]
+    },
+    "SolverAlgorithm/accuracy": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:22.444Z",
+          "value": 0.9,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306280-1--bench-variant-balanced"
+        }
+      ]
+    },
+    "SolverAlgorithm/memory_mb": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:39:22.444Z",
+          "value": 45.76,
+          "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+          "run_id": "24103306280-1--bench-variant-balanced"
+        }
+      ]
+    }
+  }
+}

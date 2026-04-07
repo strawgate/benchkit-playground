@@ -1,0 +1,9 @@
+[
+  {
+    "ref": "refs/heads/main",
+    "latestRunId": "24103306271-1--bench-hyperfine-auto",
+    "latestTimestamp": "2026-04-07T20:39:26.257Z",
+    "latestCommit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+    "runCount": 6
+  }
+]

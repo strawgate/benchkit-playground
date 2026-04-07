@@ -1,0 +1,173 @@
+{
+  "run": {
+    "id": "24103306271-1--bench-hyperfine-auto",
+    "timestamp": "2026-04-07T20:39:26.257Z",
+    "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
+    "ref": "refs/heads/main",
+    "benchmarks": 4,
+    "metrics": [
+      "max",
+      "mean",
+      "median",
+      "min",
+      "stddev"
+    ]
+  },
+  "metricSnapshots": [
+    {
+      "metric": "max",
+      "unit": "s",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "sort /etc/passwd",
+          "value": 0.00339,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "cat /etc/passwd",
+          "value": 0.00107,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "wc -l /etc/passwd",
+          "value": 0.00156,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "grep root /etc/passwd",
+          "value": 0.00176,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        }
+      ]
+    },
+    {
+      "metric": "mean",
+      "unit": "s",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "sort /etc/passwd",
+          "value": 0.00318,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "cat /etc/passwd",
+          "value": 0.00086,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "wc -l /etc/passwd",
+          "value": 0.00134,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "grep root /etc/passwd",
+          "value": 0.00162,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        }
+      ]
+    },
+    {
+      "metric": "median",
+      "unit": "s",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "sort /etc/passwd",
+          "value": 0.00326,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "cat /etc/passwd",
+          "value": 0.00082,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "wc -l /etc/passwd",
+          "value": 0.00135,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "grep root /etc/passwd",
+          "value": 0.00163,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        }
+      ]
+    },
+    {
+      "metric": "min",
+      "unit": "s",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "sort /etc/passwd",
+          "value": 0.00287,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "cat /etc/passwd",
+          "value": 0.00067,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "wc -l /etc/passwd",
+          "value": 0.00129,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "grep root /etc/passwd",
+          "value": 0.00131,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        }
+      ]
+    },
+    {
+      "metric": "stddev",
+      "unit": "s",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "sort /etc/passwd",
+          "value": 0.00017,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "cat /etc/passwd",
+          "value": 0.00011,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "wc -l /etc/passwd",
+          "value": 0.00015,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "grep root /etc/passwd",
+          "value": 0.00017,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        }
+      ]
+    }
+  ]
+}
