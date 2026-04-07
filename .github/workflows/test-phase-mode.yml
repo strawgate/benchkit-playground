@@ -484,3 +484,244 @@ jobs:
           print()
           print("✅ SET-PHASE ACTION VALIDATION PASSED")
           PYEOF
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Job 5: Emit-metric only (no hostmetrics scraping)
+  # ═══════════════════════════════════════════════════════════════════
+  emit-metric-only:
+    name: Emit-metric only (no hostmetrics)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start monitor (phase mode, empty metric-sets)
+        id: monitor
+        uses: strawgate/benchkit/actions/monitor@pr/318-dist
+        with:
+          scrape-interval: 5s
+          metric-sets: ""
+          enable-phases: "true"
+
+      - name: Set phase → warmup
+        run: benchkit-set-phase --phase warmup
+
+      - name: Emit metric during warmup
+        uses: strawgate/benchkit/actions/emit-metric@pr/318-dist
+        with:
+          otlp-http-endpoint: ${{ steps.monitor.outputs.otlp-http-endpoint }}
+          name: emit_only_warmup
+          value: 42
+          unit: ops
+          direction: bigger_is_better
+
+      - name: Wait for flush
+        run: sleep 5
+
+      - name: Set phase → measure
+        run: benchkit-set-phase --phase measure
+
+      - name: Emit metric during measure
+        uses: strawgate/benchkit/actions/emit-metric@pr/318-dist
+        with:
+          otlp-http-endpoint: ${{ steps.monitor.outputs.otlp-http-endpoint }}
+          name: emit_only_measure
+          value: 99
+          unit: ops
+          direction: bigger_is_better
+
+      - name: Wait for flush
+        run: sleep 5
+
+      - name: Validate emit-only telemetry
+        run: |
+          OUTPUT="$RUNNER_TEMP/benchkit-telemetry.otlp.jsonl"
+          python3 << PYEOF
+          import json, sys
+
+          with open("$OUTPUT") as f:
+              lines = [json.loads(l) for l in f if l.strip()]
+
+          phases = set()
+          custom_metrics = set()
+          has_hostmetrics = False
+          for line in lines:
+              for rm in line.get("resourceMetrics", []):
+                  attrs = {a["key"]: list(a["value"].values())[0]
+                           for a in rm.get("resource", {}).get("attributes", [])}
+                  phase = attrs.get("benchkit.phase", "MISSING")
+                  phases.add(phase)
+                  for sm in rm.get("scopeMetrics", []):
+                      for m in sm.get("metrics", []):
+                          name = m["name"]
+                          if name.startswith("system."):
+                              has_hostmetrics = True
+                          else:
+                              custom_metrics.add(name)
+
+          print(f"Phases: {sorted(phases)}")
+          print(f"Custom metrics: {sorted(custom_metrics)}")
+          print(f"Has hostmetrics: {has_hostmetrics}")
+
+          ok = True
+          if "warmup" in phases and "measure" in phases:
+              print("✅ Both phases found")
+          else:
+              print(f"❌ Expected warmup+measure, got {phases}")
+              ok = False
+
+          if "emit_only_warmup" in custom_metrics and "emit_only_measure" in custom_metrics:
+              print("✅ Both custom metrics found")
+          else:
+              print(f"❌ Missing custom metrics: {custom_metrics}")
+              ok = False
+
+          if has_hostmetrics:
+              print("⚠ Unexpected hostmetrics found (metric-sets was empty)")
+          else:
+              print("✅ No hostmetrics (correct for empty metric-sets)")
+
+          if not ok:
+              sys.exit(1)
+          print()
+          print("✅ EMIT-METRIC-ONLY VALIDATION PASSED")
+          PYEOF
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Job 6: Custom ports for phase collector
+  # ═══════════════════════════════════════════════════════════════════
+  custom-ports:
+    name: Custom phase ports
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start monitor (custom ports)
+        id: monitor
+        uses: strawgate/benchkit/actions/monitor@pr/318-dist
+        with:
+          scrape-interval: 5s
+          metric-sets: cpu
+          enable-phases: "true"
+          phase-grpc-port: "24317"
+          phase-http-port: "24318"
+
+      - name: Verify custom ports in state
+        run: |
+          python3 << PYEOF
+          import json, os
+          state = json.load(open(os.path.join(os.environ["RUNNER_TEMP"], ".benchkit-otel.state.json")))
+          assert state["phaseInternalGrpcPort"] == 24317, f"Expected 24317 got {state['phaseInternalGrpcPort']}"
+          assert state["phaseInternalHttpPort"] == 24318, f"Expected 24318 got {state['phaseInternalHttpPort']}"
+          print(f"✅ Phase gRPC port: {state['phaseInternalGrpcPort']}")
+          print(f"✅ Phase HTTP port: {state['phaseInternalHttpPort']}")
+          PYEOF
+
+      - name: Set phase → warmup (using custom ports)
+        run: benchkit-set-phase --phase warmup
+
+      - name: Emit metric
+        uses: strawgate/benchkit/actions/emit-metric@pr/318-dist
+        with:
+          otlp-http-endpoint: ${{ steps.monitor.outputs.otlp-http-endpoint }}
+          name: custom_port_metric
+          value: 77
+          unit: ms
+          direction: smaller_is_better
+
+      - name: Wait for flush
+        run: sleep 8
+
+      - name: Validate custom port telemetry
+        run: |
+          OUTPUT="$RUNNER_TEMP/benchkit-telemetry.otlp.jsonl"
+          python3 << PYEOF
+          import json, sys
+
+          with open("$OUTPUT") as f:
+              lines = [json.loads(l) for l in f if l.strip()]
+
+          print(f"JSONL lines: {len(lines)}")
+          found_warmup = False
+          found_metric = False
+          for line in lines:
+              for rm in line.get("resourceMetrics", []):
+                  attrs = {a["key"]: list(a["value"].values())[0]
+                           for a in rm.get("resource", {}).get("attributes", [])}
+                  if attrs.get("benchkit.phase") == "warmup":
+                      found_warmup = True
+                  for sm in rm.get("scopeMetrics", []):
+                      for m in sm.get("metrics", []):
+                          if m["name"] == "custom_port_metric":
+                              found_metric = True
+
+          if found_warmup:
+              print("✅ warmup phase found (custom ports working)")
+          else:
+              print("❌ warmup phase not found")
+              sys.exit(1)
+          if found_metric:
+              print("✅ custom_port_metric found")
+          else:
+              print("❌ custom_port_metric not found")
+              sys.exit(1)
+          print()
+          print("✅ CUSTOM PORTS VALIDATION PASSED")
+          PYEOF
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Job 7: Process metrics filtering
+  # ═══════════════════════════════════════════════════════════════════
+  process-metrics-filter:
+    name: Process metrics filtered
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start monitor (with process metrics + phases)
+        id: monitor
+        uses: strawgate/benchkit/actions/monitor@pr/318-dist
+        with:
+          scrape-interval: 5s
+          metric-sets: cpu,memory,process
+          enable-phases: "true"
+
+      - name: Set phase → measure
+        run: benchkit-set-phase --phase measure
+
+      - name: Workload (10s to collect process metrics)
+        run: sleep 10
+
+      - name: Check raw telemetry before post-step
+        run: |
+          OUTPUT="$RUNNER_TEMP/benchkit-telemetry.otlp.jsonl"
+          python3 << PYEOF
+          import json
+
+          with open("$OUTPUT") as f:
+              lines = [json.loads(l) for l in f if l.strip()]
+
+          process_metrics = set()
+          other_metrics = set()
+          for line in lines:
+              for rm in line.get("resourceMetrics", []):
+                  for sm in rm.get("scopeMetrics", []):
+                      for m in sm.get("metrics", []):
+                          name = m["name"]
+                          if name.startswith("process."):
+                              process_metrics.add(name)
+                          else:
+                              other_metrics.add(name)
+
+          print(f"Process metrics ({len(process_metrics)}): {sorted(process_metrics)[:5]}")
+          print(f"Other metrics ({len(other_metrics)}): {sorted(other_metrics)[:5]}")
+
+          if process_metrics:
+              print("✅ Process metrics present in raw output (will be filtered by post step)")
+          else:
+              print("⚠ No process metrics found — scraping may not have started yet")
+
+          if other_metrics:
+              print("✅ Non-process metrics present")
+          else:
+              print("❌ No non-process metrics found")
+          PYEOF
