@@ -16,6 +16,18 @@
           "value": 0,
           "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
           "run_id": "24103306271-1--bench-hyperfine-auto"
+        },
+        {
+          "timestamp": "2026-04-07T20:45:39.396Z",
+          "value": 0,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103567432-1--bench-hyperfine"
+        },
+        {
+          "timestamp": "2026-04-07T20:45:40.403Z",
+          "value": 0,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103567432-1--bench-hyperfine-auto"
         }
       ]
     },
@@ -32,6 +44,18 @@
           "value": 0,
           "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
           "run_id": "24103306271-1--bench-hyperfine-auto"
+        },
+        {
+          "timestamp": "2026-04-07T20:45:39.396Z",
+          "value": 0,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103567432-1--bench-hyperfine"
+        },
+        {
+          "timestamp": "2026-04-07T20:45:40.403Z",
+          "value": 0,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103567432-1--bench-hyperfine-auto"
         }
       ]
     },
@@ -48,6 +72,18 @@
           "value": 0,
           "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
           "run_id": "24103306271-1--bench-hyperfine-auto"
+        },
+        {
+          "timestamp": "2026-04-07T20:45:39.396Z",
+          "value": 0,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103567432-1--bench-hyperfine"
+        },
+        {
+          "timestamp": "2026-04-07T20:45:40.403Z",
+          "value": 0,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103567432-1--bench-hyperfine-auto"
         }
       ]
     },
@@ -64,6 +100,68 @@
           "value": 0,
           "commit": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e",
           "run_id": "24103306271-1--bench-hyperfine-auto"
+        },
+        {
+          "timestamp": "2026-04-07T20:45:39.396Z",
+          "value": 0,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103567432-1--bench-hyperfine"
+        },
+        {
+          "timestamp": "2026-04-07T20:45:40.403Z",
+          "value": 0,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103567432-1--bench-hyperfine-auto"
+        }
+      ]
+    },
+    "test_json_parse": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:45:46.538Z",
+          "value": 0,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103571838-1--bench-pytest"
+        }
+      ]
+    },
+    "test_json_encode": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:45:46.538Z",
+          "value": 0,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103571838-1--bench-pytest"
+        }
+      ]
+    },
+    "test_db_query_simple": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:45:46.538Z",
+          "value": 0.01,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103571838-1--bench-pytest"
+        }
+      ]
+    },
+    "test_db_query_join": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:45:46.538Z",
+          "value": 0.05,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103571838-1--bench-pytest"
+        }
+      ]
+    },
+    "test_http_handler": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:45:46.538Z",
+          "value": 0,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103571838-1--bench-pytest"
         }
       ]
     }

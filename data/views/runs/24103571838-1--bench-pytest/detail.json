@@ -1,0 +1,273 @@
+{
+  "run": {
+    "id": "24103571838-1--bench-pytest",
+    "timestamp": "2026-04-07T20:45:46.538Z",
+    "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+    "ref": "refs/heads/main",
+    "benchmarks": 5,
+    "metrics": [
+      "max",
+      "mean",
+      "median",
+      "min",
+      "ops",
+      "rounds",
+      "stddev"
+    ]
+  },
+  "metricSnapshots": [
+    {
+      "metric": "max",
+      "unit": "s",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "test_json_parse",
+          "value": 0.00015855,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_json_encode",
+          "value": 0.00007564,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_db_query_simple",
+          "value": 0.01025048,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_db_query_join",
+          "value": 0.04688615,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_http_handler",
+          "value": 0.0010475,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        }
+      ]
+    },
+    {
+      "metric": "mean",
+      "unit": "s",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "test_json_parse",
+          "value": 0.00013386,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_json_encode",
+          "value": 0.00006178,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_db_query_simple",
+          "value": 0.00903344,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_db_query_join",
+          "value": 0.04142156,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_http_handler",
+          "value": 0.00086639,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        }
+      ]
+    },
+    {
+      "metric": "median",
+      "unit": "s",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "test_json_parse",
+          "value": 0.00013607,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_json_encode",
+          "value": 0.00006232,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_db_query_simple",
+          "value": 0.0091542,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_db_query_join",
+          "value": 0.0419211,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_http_handler",
+          "value": 0.00086299,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        }
+      ]
+    },
+    {
+      "metric": "min",
+      "unit": "s",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "test_json_parse",
+          "value": 0.00012563,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_json_encode",
+          "value": 0.00005716,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_db_query_simple",
+          "value": 0.00862776,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_db_query_join",
+          "value": 0.03960003,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_http_handler",
+          "value": 0.00080602,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        }
+      ]
+    },
+    {
+      "metric": "ops",
+      "unit": "ops/s",
+      "direction": "bigger_is_better",
+      "values": [
+        {
+          "name": "test_json_parse",
+          "value": 7470.49,
+          "unit": "ops/s",
+          "direction": "bigger_is_better"
+        },
+        {
+          "name": "test_json_encode",
+          "value": 16186.47,
+          "unit": "ops/s",
+          "direction": "bigger_is_better"
+        },
+        {
+          "name": "test_db_query_simple",
+          "value": 110.7,
+          "unit": "ops/s",
+          "direction": "bigger_is_better"
+        },
+        {
+          "name": "test_db_query_join",
+          "value": 24.14,
+          "unit": "ops/s",
+          "direction": "bigger_is_better"
+        },
+        {
+          "name": "test_http_handler",
+          "value": 1154.21,
+          "unit": "ops/s",
+          "direction": "bigger_is_better"
+        }
+      ]
+    },
+    {
+      "metric": "rounds",
+      "direction": "bigger_is_better",
+      "values": [
+        {
+          "name": "test_json_parse",
+          "value": 1000,
+          "direction": "bigger_is_better"
+        },
+        {
+          "name": "test_json_encode",
+          "value": 2000,
+          "direction": "bigger_is_better"
+        },
+        {
+          "name": "test_db_query_simple",
+          "value": 200,
+          "direction": "bigger_is_better"
+        },
+        {
+          "name": "test_db_query_join",
+          "value": 50,
+          "direction": "bigger_is_better"
+        },
+        {
+          "name": "test_http_handler",
+          "value": 1500,
+          "direction": "bigger_is_better"
+        }
+      ]
+    },
+    {
+      "metric": "stddev",
+      "unit": "s",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "test_json_parse",
+          "value": 0.00000823,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_json_encode",
+          "value": 0.00000462,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_db_query_simple",
+          "value": 0.00040568,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_db_query_join",
+          "value": 0.00182153,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "test_http_handler",
+          "value": 0.00006037,
+          "unit": "s",
+          "direction": "smaller_is_better"
+        }
+      ]
+    }
+  ]
+}

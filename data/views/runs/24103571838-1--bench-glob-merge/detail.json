@@ -1,0 +1,75 @@
+{
+  "run": {
+    "id": "24103571838-1--bench-glob-merge",
+    "timestamp": "2026-04-07T20:45:46.024Z",
+    "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+    "ref": "refs/heads/main",
+    "benchmarks": 9,
+    "metrics": [
+      "value"
+    ]
+  },
+  "metricSnapshots": [
+    {
+      "metric": "value",
+      "unit": "ns/op",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "Compress/gzip",
+          "value": 44632.43,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "Compress/gzip/ratio",
+          "value": 0.43,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "Compress/lz4",
+          "value": 8517,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "Compress/lz4/ratio",
+          "value": 0.59,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "Compress/zstd",
+          "value": 12709.9,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "Compress/zstd/ratio",
+          "value": 0.34,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "Decompress/gzip",
+          "value": 26723.23,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "Decompress/lz4",
+          "value": 3930.67,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "Decompress/zstd",
+          "value": 9520.05,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        }
+      ]
+    }
+  ]
+}

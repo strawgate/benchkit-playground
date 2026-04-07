@@ -13,27 +13,27 @@
   },
   {
     "metric": "max",
-    "latestSeriesCount": 4,
-    "latestRunId": "24103306271-1--bench-hyperfine-auto",
-    "latestTimestamp": "2026-04-07T20:39:26.257Z"
+    "latestSeriesCount": 9,
+    "latestRunId": "24103571838-1--bench-pytest",
+    "latestTimestamp": "2026-04-07T20:45:46.538Z"
   },
   {
     "metric": "mean",
-    "latestSeriesCount": 4,
-    "latestRunId": "24103306271-1--bench-hyperfine-auto",
-    "latestTimestamp": "2026-04-07T20:39:26.257Z"
+    "latestSeriesCount": 9,
+    "latestRunId": "24103571838-1--bench-pytest",
+    "latestTimestamp": "2026-04-07T20:45:46.538Z"
   },
   {
     "metric": "median",
-    "latestSeriesCount": 4,
-    "latestRunId": "24103306271-1--bench-hyperfine-auto",
-    "latestTimestamp": "2026-04-07T20:39:26.257Z"
+    "latestSeriesCount": 9,
+    "latestRunId": "24103571838-1--bench-pytest",
+    "latestTimestamp": "2026-04-07T20:45:46.538Z"
   },
   {
     "metric": "min",
-    "latestSeriesCount": 4,
-    "latestRunId": "24103306271-1--bench-hyperfine-auto",
-    "latestTimestamp": "2026-04-07T20:39:26.257Z"
+    "latestSeriesCount": 9,
+    "latestRunId": "24103571838-1--bench-pytest",
+    "latestTimestamp": "2026-04-07T20:45:46.538Z"
   },
   {
     "metric": "ns_per_op",
@@ -42,15 +42,27 @@
     "latestTimestamp": "2026-04-07T20:43:17.777Z"
   },
   {
+    "metric": "ops",
+    "latestSeriesCount": 5,
+    "latestRunId": "24103571838-1--bench-pytest",
+    "latestTimestamp": "2026-04-07T20:45:46.538Z"
+  },
+  {
+    "metric": "rounds",
+    "latestSeriesCount": 5,
+    "latestRunId": "24103571838-1--bench-pytest",
+    "latestTimestamp": "2026-04-07T20:45:46.538Z"
+  },
+  {
     "metric": "stddev",
-    "latestSeriesCount": 4,
-    "latestRunId": "24103306271-1--bench-hyperfine-auto",
-    "latestTimestamp": "2026-04-07T20:39:26.257Z"
+    "latestSeriesCount": 9,
+    "latestRunId": "24103571838-1--bench-pytest",
+    "latestTimestamp": "2026-04-07T20:45:46.538Z"
   },
   {
     "metric": "value",
-    "latestSeriesCount": 19,
-    "latestRunId": "24103467630-1--bench-native",
-    "latestTimestamp": "2026-04-07T20:43:16.721Z"
+    "latestSeriesCount": 28,
+    "latestRunId": "24103576653-1--bench-variant-balanced",
+    "latestTimestamp": "2026-04-07T20:45:52.631Z"
   }
 ]

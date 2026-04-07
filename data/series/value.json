@@ -242,6 +242,12 @@
           "value": 2295.43,
           "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
           "run_id": "24103467559-1--bench-variant-balanced"
+        },
+        {
+          "timestamp": "2026-04-07T20:45:52.631Z",
+          "value": 2372.28,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103576653-1--bench-variant-balanced"
         }
       ]
     },
@@ -264,6 +270,12 @@
           "value": 0.92,
           "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
           "run_id": "24103467559-1--bench-variant-balanced"
+        },
+        {
+          "timestamp": "2026-04-07T20:45:52.631Z",
+          "value": 0.9,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103576653-1--bench-variant-balanced"
         }
       ]
     },
@@ -286,6 +298,102 @@
           "value": 44.42,
           "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
           "run_id": "24103467559-1--bench-variant-balanced"
+        },
+        {
+          "timestamp": "2026-04-07T20:45:52.631Z",
+          "value": 44.31,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103576653-1--bench-variant-balanced"
+        }
+      ]
+    },
+    "Compress/gzip": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:45:46.024Z",
+          "value": 44632.43,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103571838-1--bench-glob-merge"
+        }
+      ]
+    },
+    "Compress/gzip/ratio": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:45:46.024Z",
+          "value": 0.43,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103571838-1--bench-glob-merge"
+        }
+      ]
+    },
+    "Compress/lz4": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:45:46.024Z",
+          "value": 8517,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103571838-1--bench-glob-merge"
+        }
+      ]
+    },
+    "Compress/lz4/ratio": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:45:46.024Z",
+          "value": 0.59,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103571838-1--bench-glob-merge"
+        }
+      ]
+    },
+    "Compress/zstd": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:45:46.024Z",
+          "value": 12709.9,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103571838-1--bench-glob-merge"
+        }
+      ]
+    },
+    "Compress/zstd/ratio": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:45:46.024Z",
+          "value": 0.34,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103571838-1--bench-glob-merge"
+        }
+      ]
+    },
+    "Decompress/gzip": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:45:46.024Z",
+          "value": 26723.23,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103571838-1--bench-glob-merge"
+        }
+      ]
+    },
+    "Decompress/lz4": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:45:46.024Z",
+          "value": 3930.67,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103571838-1--bench-glob-merge"
+        }
+      ]
+    },
+    "Decompress/zstd": {
+      "points": [
+        {
+          "timestamp": "2026-04-07T20:45:46.024Z",
+          "value": 9520.05,
+          "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+          "run_id": "24103571838-1--bench-glob-merge"
         }
       ]
     }
