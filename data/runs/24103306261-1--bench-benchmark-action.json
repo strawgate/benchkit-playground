@@ -1,0 +1,228 @@
+{
+  "resourceMetrics": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "benchkit.source_format",
+            "value": {
+              "stringValue": "benchmark-action"
+            }
+          },
+          {
+            "key": "benchkit.ref",
+            "value": {
+              "stringValue": "refs/heads/main"
+            }
+          },
+          {
+            "key": "benchkit.commit",
+            "value": {
+              "stringValue": "298b1e1ed17bafb5c8d601f3c121f443378d3a9e"
+            }
+          },
+          {
+            "key": "benchkit.runner",
+            "value": {
+              "stringValue": "Linux/X64"
+            }
+          }
+        ]
+      },
+      "scopeMetrics": [
+        {
+          "metrics": [
+            {
+              "name": "value",
+              "unit": "ops/sec",
+              "gauge": {
+                "dataPoints": [
+                  {
+                    "timeUnixNano": "1775594360220000000",
+                    "attributes": [
+                      {
+                        "key": "benchkit.scenario",
+                        "value": {
+                          "stringValue": "FibonacciRecursive"
+                        }
+                      },
+                      {
+                        "key": "benchkit.series",
+                        "value": {
+                          "stringValue": "FibonacciRecursive"
+                        }
+                      },
+                      {
+                        "key": "benchkit.metric.role",
+                        "value": {
+                          "stringValue": "outcome"
+                        }
+                      },
+                      {
+                        "key": "benchkit.metric.direction",
+                        "value": {
+                          "stringValue": "bigger_is_better"
+                        }
+                      }
+                    ],
+                    "asDouble": 11960.39
+                  },
+                  {
+                    "timeUnixNano": "1775594360220000000",
+                    "attributes": [
+                      {
+                        "key": "benchkit.scenario",
+                        "value": {
+                          "stringValue": "FibonacciIterative"
+                        }
+                      },
+                      {
+                        "key": "benchkit.series",
+                        "value": {
+                          "stringValue": "FibonacciIterative"
+                        }
+                      },
+                      {
+                        "key": "benchkit.metric.role",
+                        "value": {
+                          "stringValue": "outcome"
+                        }
+                      },
+                      {
+                        "key": "benchkit.metric.direction",
+                        "value": {
+                          "stringValue": "bigger_is_better"
+                        }
+                      }
+                    ],
+                    "asDouble": 99773.05
+                  },
+                  {
+                    "timeUnixNano": "1775594360220000000",
+                    "attributes": [
+                      {
+                        "key": "benchkit.scenario",
+                        "value": {
+                          "stringValue": "FibonacciMemoized"
+                        }
+                      },
+                      {
+                        "key": "benchkit.series",
+                        "value": {
+                          "stringValue": "FibonacciMemoized"
+                        }
+                      },
+                      {
+                        "key": "benchkit.metric.role",
+                        "value": {
+                          "stringValue": "outcome"
+                        }
+                      },
+                      {
+                        "key": "benchkit.metric.direction",
+                        "value": {
+                          "stringValue": "bigger_is_better"
+                        }
+                      }
+                    ],
+                    "asDouble": 84464.59
+                  },
+                  {
+                    "timeUnixNano": "1775594360220000000",
+                    "attributes": [
+                      {
+                        "key": "benchkit.scenario",
+                        "value": {
+                          "stringValue": "MatrixMultiply 100x"
+                        }
+                      },
+                      {
+                        "key": "benchkit.series",
+                        "value": {
+                          "stringValue": "MatrixMultiply 100x"
+                        }
+                      },
+                      {
+                        "key": "benchkit.metric.role",
+                        "value": {
+                          "stringValue": "outcome"
+                        }
+                      },
+                      {
+                        "key": "benchkit.metric.direction",
+                        "value": {
+                          "stringValue": "smaller_is_better"
+                        }
+                      }
+                    ],
+                    "asDouble": 14949.13
+                  },
+                  {
+                    "timeUnixNano": "1775594360220000000",
+                    "attributes": [
+                      {
+                        "key": "benchkit.scenario",
+                        "value": {
+                          "stringValue": "MatrixMultiply 500x"
+                        }
+                      },
+                      {
+                        "key": "benchkit.series",
+                        "value": {
+                          "stringValue": "MatrixMultiply 500x"
+                        }
+                      },
+                      {
+                        "key": "benchkit.metric.role",
+                        "value": {
+                          "stringValue": "outcome"
+                        }
+                      },
+                      {
+                        "key": "benchkit.metric.direction",
+                        "value": {
+                          "stringValue": "smaller_is_better"
+                        }
+                      }
+                    ],
+                    "asDouble": 339497.76
+                  },
+                  {
+                    "timeUnixNano": "1775594360220000000",
+                    "attributes": [
+                      {
+                        "key": "benchkit.scenario",
+                        "value": {
+                          "stringValue": "StringConcat x1000"
+                        }
+                      },
+                      {
+                        "key": "benchkit.series",
+                        "value": {
+                          "stringValue": "StringConcat x1000"
+                        }
+                      },
+                      {
+                        "key": "benchkit.metric.role",
+                        "value": {
+                          "stringValue": "outcome"
+                        }
+                      },
+                      {
+                        "key": "benchkit.metric.direction",
+                        "value": {
+                          "stringValue": "bigger_is_better"
+                        }
+                      }
+                    ],
+                    "asDouble": 241771.56
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
