@@ -45,9 +45,9 @@ jobs:
 
           echo ""
           echo "=== Monitor state (phase fields) ==="
-          python3 << 'PYEOF'
-          import json
-          state = json.load(open("$RUNNER_TEMP/.benchkit-otel.state.json"))
+          python3 << PYEOF
+          import json, os
+          state = json.load(open(os.path.join(os.environ["RUNNER_TEMP"], ".benchkit-otel.state.json")))
           for k in ["enablePhases", "phaseCollectorPid", "binaryPath", "phaseConfigPath", "phaseOutputPath"]:
               print(f"  {k}: {state.get(k)}")
           assert state.get("enablePhases") == True, "enablePhases must be True"
@@ -229,9 +229,9 @@ jobs:
 
           echo ""
           echo "=== Check collectors running ==="
-          python3 << 'PYEOF'
+          python3 << PYEOF
           import json, os
-          state = json.load(open("$RUNNER_TEMP/.benchkit-otel.state.json"))
+          state = json.load(open(os.path.join(os.environ["RUNNER_TEMP"], ".benchkit-otel.state.json")))
           pid = state.get("pid")
           c2_pid = state.get("phaseCollectorPid")
           for name, p in [("C1 (upstream)", pid), ("C2 (phase)", c2_pid)]:
