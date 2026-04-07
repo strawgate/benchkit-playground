@@ -19,7 +19,7 @@ jobs:
 
       - name: Generate benchmark results
         run: |
-          echo '{"benchmarks":[{"name":"Test","metrics":{"ns_per_op":{"value":100,"unit":"ns/op","direction":"smaller_is_better"}}}]}' > bench.json
+          echo '[{"name":"Test","value":100,"unit":"ns/op"}]' > bench.json
 
       - name: Compare against non-existent branch
         id: compare
@@ -27,7 +27,7 @@ jobs:
         uses: strawgate/benchkit/actions/compare@main-dist
         with:
           results: bench.json
-          format: native
+          format: benchmark-action
           baseline-runs: 5
           threshold: 5
           fail-on-regression: false

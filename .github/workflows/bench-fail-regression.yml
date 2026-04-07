@@ -25,22 +25,14 @@ jobs:
           # Intentionally use 3x the baseline values to guarantee regression detection
           python3 - <<'EOF'
           import json
-          result = {
-              "benchmarks": [
-                  {
-                      "name": "SearchAlgorithms/binary",
-                      "tags": {"dataset": "uniform", "size": "10000"},
-                      "metrics": {
-                          # 3x regression: baseline is ~45 ns/op, this is ~135 ns/op
-                          "ns_per_op": {"value": 135, "unit": "ns/op", "direction": "smaller_is_better"},
-                          # 3x regression in throughput (lower)
-                          "throughput": {"value": 280000, "unit": "ops/sec", "direction": "bigger_is_better"},
-                      },
-                  }
-              ]
-          }
+          # 3x regression: baseline is ~45 ns/op, this is ~135 ns/op
+          # 3x regression in throughput (lower)
+          results = [
+              {"name": "SearchAlgorithms/binary",            "value": 135,    "unit": "ns/op"},
+              {"name": "SearchAlgorithms/binary/throughput",  "value": 280000, "unit": "ops/sec"},
+          ]
           with open("bench-regressed.json", "w") as f:
-              json.dump(result, f, indent=2)
+              json.dump(results, f, indent=2)
               f.write("\n")
           EOF
 
@@ -50,7 +42,7 @@ jobs:
         uses: strawgate/benchkit/actions/compare@main-dist
         with:
           results: bench-regressed.json
-          format: native
+          format: benchmark-action
           baseline-runs: 5
           threshold: 10
           fail-on-regression: true

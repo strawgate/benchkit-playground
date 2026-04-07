@@ -47,6 +47,10 @@ jobs:
         run: npm ci
         working-directory: benchkit
 
+      - name: Build core package
+        run: npm run build --workspace=packages/core
+        working-directory: benchkit
+
       - name: Build format package
         run: npm run build --workspace=packages/format
         working-directory: benchkit

@@ -32,37 +32,17 @@ jobs:
               return round(base * (1 + random.uniform(-pct, pct)))
 
           # Introduce a deliberate 8% regression on binary search
-          result = {
-              "benchmarks": [
-                  {
-                      "name": "SearchAlgorithms/linear",
-                      "tags": {"dataset": "uniform", "size": "10000"},
-                      "metrics": {
-                          "ns_per_op": {"value": vary(245),  "unit": "ns/op",   "direction": "smaller_is_better"},
-                          "throughput": {"value": vary(125000), "unit": "ops/sec", "direction": "bigger_is_better"},
-                      },
-                  },
-                  {
-                      "name": "SearchAlgorithms/binary",
-                      "tags": {"dataset": "uniform", "size": "10000"},
-                      "metrics": {
-                          # Deliberate +8% regression to test threshold detection
-                          "ns_per_op": {"value": vary(265), "unit": "ns/op", "direction": "smaller_is_better"},
-                          "throughput": {"value": vary(780000), "unit": "ops/sec", "direction": "bigger_is_better"},
-                      },
-                  },
-                  {
-                      "name": "SearchAlgorithms/hash",
-                      "tags": {"dataset": "uniform", "size": "10000"},
-                      "metrics": {
-                          "ns_per_op": {"value": vary(12), "unit": "ns/op", "direction": "smaller_is_better"},
-                          "throughput": {"value": vary(3200000), "unit": "ops/sec", "direction": "bigger_is_better"},
-                      },
-                  },
-              ]
-          }
+          results = [
+              {"name": "SearchAlgorithms/linear",            "value": vary(245),     "unit": "ns/op"},
+              {"name": "SearchAlgorithms/linear/throughput",  "value": vary(125000),  "unit": "ops/sec"},
+              # Deliberate +8% regression to test threshold detection
+              {"name": "SearchAlgorithms/binary",            "value": vary(265),     "unit": "ns/op"},
+              {"name": "SearchAlgorithms/binary/throughput",  "value": vary(780000),  "unit": "ops/sec"},
+              {"name": "SearchAlgorithms/hash",              "value": vary(12),      "unit": "ns/op"},
+              {"name": "SearchAlgorithms/hash/throughput",    "value": vary(3200000), "unit": "ops/sec"},
+          ]
           with open("bench-results.json", "w") as f:
-              json.dump(result, f, indent=2)
+              json.dump(results, f, indent=2)
               f.write("\n")
           EOF
 
@@ -71,7 +51,7 @@ jobs:
         uses: strawgate/benchkit/actions/compare@main-dist
         with:
           results: bench-results.json
-          format: native
+          format: benchmark-action
           baseline-runs: 5
           threshold: 5
           fail-on-regression: false

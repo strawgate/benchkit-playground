@@ -167,7 +167,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Generate two separate native result files
+      - name: Generate two separate benchmark-action result files
         run: |
           python3 - <<'EOF'
           import random, json
@@ -175,32 +175,22 @@ jobs:
           def vary(base, pct=0.05):
               return round(base * (1 + random.uniform(-pct, pct)), 2)
 
-          # File 1: compression benchmarks
-          file1 = {
-              "benchmarks": [
-                  {"name": "Compress/gzip", "tags": {"level": "6"},
-                   "metrics": {"ns_per_op": {"value": vary(45000), "unit": "ns/op", "direction": "smaller_is_better"},
-                               "ratio": {"value": vary(0.42, 0.02), "unit": "ratio", "direction": "bigger_is_better"}}},
-                  {"name": "Compress/lz4",  "tags": {"level": "1"},
-                   "metrics": {"ns_per_op": {"value": vary(8200),  "unit": "ns/op", "direction": "smaller_is_better"},
-                               "ratio": {"value": vary(0.58, 0.02), "unit": "ratio", "direction": "bigger_is_better"}}},
-                  {"name": "Compress/zstd", "tags": {"level": "3"},
-                   "metrics": {"ns_per_op": {"value": vary(12500), "unit": "ns/op", "direction": "smaller_is_better"},
-                               "ratio": {"value": vary(0.35, 0.02), "unit": "ratio", "direction": "bigger_is_better"}}},
-              ]
-          }
+          # File 1: compression benchmarks (benchmark-action format)
+          file1 = [
+              {"name": "Compress/gzip",          "value": vary(45000), "unit": "ns/op"},
+              {"name": "Compress/gzip/ratio",     "value": vary(0.42, 0.02), "unit": "ratio"},
+              {"name": "Compress/lz4",           "value": vary(8200),  "unit": "ns/op"},
+              {"name": "Compress/lz4/ratio",      "value": vary(0.58, 0.02), "unit": "ratio"},
+              {"name": "Compress/zstd",          "value": vary(12500), "unit": "ns/op"},
+              {"name": "Compress/zstd/ratio",     "value": vary(0.35, 0.02), "unit": "ratio"},
+          ]
 
-          # File 2: decompression benchmarks
-          file2 = {
-              "benchmarks": [
-                  {"name": "Decompress/gzip", "tags": {"level": "6"},
-                   "metrics": {"ns_per_op": {"value": vary(28000), "unit": "ns/op", "direction": "smaller_is_better"}}},
-                  {"name": "Decompress/lz4",  "tags": {"level": "1"},
-                   "metrics": {"ns_per_op": {"value": vary(3800),  "unit": "ns/op", "direction": "smaller_is_better"}}},
-                  {"name": "Decompress/zstd", "tags": {"level": "3"},
-                   "metrics": {"ns_per_op": {"value": vary(9100),  "unit": "ns/op", "direction": "smaller_is_better"}}},
-              ]
-          }
+          # File 2: decompression benchmarks (benchmark-action format)
+          file2 = [
+              {"name": "Decompress/gzip", "value": vary(28000), "unit": "ns/op"},
+              {"name": "Decompress/lz4",  "value": vary(3800),  "unit": "ns/op"},
+              {"name": "Decompress/zstd", "value": vary(9100),  "unit": "ns/op"},
+          ]
 
           for fname, data in [("bench-compress.json", file1), ("bench-decompress.json", file2)]:
               with open(fname, "w") as f:
@@ -213,7 +203,7 @@ jobs:
         uses: strawgate/benchkit/actions/stash@main-dist
         with:
           results: bench-*.json
-          format: native
+          format: benchmark-action
           summary: true
 
       - name: Trigger aggregate

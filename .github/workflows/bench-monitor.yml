@@ -62,28 +62,14 @@ jobs:
           def vary(base, pct=0.05):
               return round(base * (1 + random.uniform(-pct, pct)), 2)
 
-          result = {
-              "benchmarks": [
-                  {
-                      "name": "CPUWorkload/compute",
-                      "tags": {"type": "cpu-bound"},
-                      "metrics": {
-                          "ns_per_op": {"value": vary(4920000), "unit": "ns/op", "direction": "smaller_is_better"},
-                          "throughput": {"value": vary(203000), "unit": "ops/sec", "direction": "bigger_is_better"},
-                      },
-                  },
-                  {
-                      "name": "CPUWorkload/memory",
-                      "tags": {"type": "memory-bound"},
-                      "metrics": {
-                          "ns_per_op": {"value": vary(8450000), "unit": "ns/op", "direction": "smaller_is_better"},
-                          "bytes_per_op": {"value": vary(65536, 0.02), "unit": "B/op", "direction": "smaller_is_better"},
-                      },
-                  },
-              ]
-          }
+          results = [
+              {"name": "CPUWorkload/compute",                "value": vary(4920000), "unit": "ns/op"},
+              {"name": "CPUWorkload/compute/throughput",     "value": vary(203000),  "unit": "ops/sec"},
+              {"name": "CPUWorkload/memory",                 "value": vary(8450000), "unit": "ns/op"},
+              {"name": "CPUWorkload/memory/bytes_per_op",    "value": vary(65536, 0.02), "unit": "B/op"},
+          ]
           with open("bench-results.json", "w") as f:
-              json.dump(result, f, indent=2)
+              json.dump(results, f, indent=2)
               f.write("\n")
           EOF
 
@@ -111,7 +97,7 @@ jobs:
         uses: strawgate/benchkit/actions/stash@main-dist
         with:
           results: bench-results.json
-          format: native
+          format: benchmark-action
           summary: true
 
       - name: Trigger aggregate

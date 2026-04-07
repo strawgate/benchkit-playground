@@ -41,23 +41,15 @@ jobs:
               return round(base * (1 + random.uniform(-pct, pct)), 3)
 
           p = profiles[variant]
-          result = {
-              "benchmarks": [
-                  {
-                      "name": "SolverAlgorithm",
-                      "tags": {"variant": variant},
-                      "metrics": {
-                          "ns_per_op":  {"value": vary(p["ns_per_op"]),  "unit": "ns/op",  "direction": "smaller_is_better"},
-                          "accuracy":   {"value": vary(p["accuracy"], 0.01), "unit": "score", "direction": "bigger_is_better"},
-                          "memory_mb":  {"value": vary(p["memory_mb"], 0.02), "unit": "MB", "direction": "smaller_is_better"},
-                      },
-                  }
-              ]
-          }
+          results = [
+              {"name": "SolverAlgorithm",            "value": vary(p["ns_per_op"]),       "unit": "ns/op"},
+              {"name": "SolverAlgorithm/accuracy",    "value": vary(p["accuracy"], 0.01),  "unit": "score"},
+              {"name": "SolverAlgorithm/memory_mb",   "value": vary(p["memory_mb"], 0.02), "unit": "MB"},
+          ]
           with open("bench-results.json", "w") as f:
-              json.dump(result, f, indent=2)
+              json.dump(results, f, indent=2)
               f.write("\n")
-          print(f"Generated {variant} results:", json.dumps(result, indent=2))
+          print(f"Generated {variant} results:", json.dumps(results, indent=2))
           EOF
         env:
           VARIANT: ${{ matrix.variant }}
@@ -66,7 +58,7 @@ jobs:
         uses: strawgate/benchkit/actions/stash@main-dist
         with:
           results: bench-results.json
-          format: native
+          format: benchmark-action
           # Matrix jobs share the same GITHUB_JOB name, so we must include
           # the matrix key in the run-id to avoid file collisions.
           run-id: ${{ github.run_id }}-${{ github.run_attempt }}--bench-variant-${{ matrix.variant }}
