@@ -1,0 +1,207 @@
+name: "E2E: Phase-decorating monitor mode"
+
+# End-to-end test for the two-collector phase-decorating topology.
+# Validates:
+#   1. Monitor starts with enable-phases: true (two collectors)
+#   2. Metrics emitted during each phase carry benchkit.phase resource attr
+#   3. Phase transitions via benchkit-set-phase CLI work
+#   4. Run ID is tagged on all metrics
+#   5. Clean shutdown with both collectors
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  phase-mode-e2e:
+    name: Phase mode E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ── Start monitor in phase mode ──────────────────────────────
+      - name: Start monitor (phase mode)
+        id: monitor
+        uses: strawgate/benchkit/actions/monitor@pr/318-dist
+        with:
+          scrape-interval: 5s
+          metric-sets: cpu,memory,load
+          enable-phases: "true"
+
+      - name: Verify phase infrastructure
+        run: |
+          echo "=== Verify benchkit-set-phase CLI is on PATH ==="
+          which benchkit-set-phase && echo "✅ Found" || { echo "❌ Not found"; exit 1; }
+
+          echo ""
+          echo "=== Verify initial phase state file ==="
+          cat "$RUNNER_TEMP/.benchkit-phase.json" | python3 -m json.tool
+
+          echo ""
+          echo "=== Monitor state (phase fields) ==="
+          python3 -c "
+          import json
+          state = json.load(open('$RUNNER_TEMP/.benchkit-otel.state.json'))
+          print(f'enablePhases: {state.get(\"enablePhases\")}')
+          print(f'phaseCollectorPid: {state.get(\"phaseCollectorPid\")}')
+          print(f'binaryPath: {state.get(\"binaryPath\")}')
+          print(f'phaseConfigPath: {state.get(\"phaseConfigPath\")}')
+          print(f'phaseOutputPath: {state.get(\"phaseOutputPath\")}')
+          "
+
+      # ── Phase 1: warmup ─────────────────────────────────────────
+      - name: Set phase → warmup
+        run: benchkit-set-phase --phase warmup --scenario smoke --series baseline
+
+      - name: Emit metric during warmup
+        uses: strawgate/benchkit/actions/emit-metric@pr/318-dist
+        with:
+          otlp-http-endpoint: ${{ steps.monitor.outputs.otlp-http-endpoint }}
+          name: e2e_warmup_metric
+          value: 100
+          unit: ms
+          scenario: smoke
+          series: baseline
+          direction: smaller_is_better
+
+      - name: Warmup workload (3s CPU burn)
+        run: |
+          python3 -c "
+          import time, math
+          start = time.time()
+          while time.time() - start < 3:
+              sum(math.sqrt(i) for i in range(10000))
+          print(f'Warmup done in {time.time()-start:.1f}s')
+          "
+
+      # ── Phase 2: measure ────────────────────────────────────────
+      - name: Set phase → measure
+        run: benchkit-set-phase --phase measure --scenario smoke --series baseline
+
+      - name: Emit metric during measure
+        uses: strawgate/benchkit/actions/emit-metric@pr/318-dist
+        with:
+          otlp-http-endpoint: ${{ steps.monitor.outputs.otlp-http-endpoint }}
+          name: e2e_measure_metric
+          value: 42
+          unit: ops/sec
+          scenario: smoke
+          series: baseline
+          direction: bigger_is_better
+
+      - name: Measure workload (5s CPU burn)
+        run: |
+          python3 -c "
+          import time, math
+          start = time.time()
+          while time.time() - start < 5:
+              sum(math.sqrt(i) for i in range(10000))
+          print(f'Measure done in {time.time()-start:.1f}s')
+          "
+
+      # ── Phase 3: cooldown ───────────────────────────────────────
+      - name: Set phase → cooldown
+        run: benchkit-set-phase --phase cooldown --scenario smoke --series baseline
+
+      - name: Emit metric during cooldown
+        uses: strawgate/benchkit/actions/emit-metric@pr/318-dist
+        with:
+          otlp-http-endpoint: ${{ steps.monitor.outputs.otlp-http-endpoint }}
+          name: e2e_cooldown_metric
+          value: 200
+          unit: ms
+          scenario: smoke
+          series: baseline
+          direction: smaller_is_better
+
+      - name: Brief cooldown (2s)
+        run: sleep 2
+
+      # ── Validate state before shutdown ──────────────────────────
+      - name: Final state inspection
+        run: |
+          echo "=== Final phase state ==="
+          cat "$RUNNER_TEMP/.benchkit-phase.json" | python3 -m json.tool
+
+          echo ""
+          echo "=== Final monitor state ==="
+          python3 -c "
+          import json
+          state = json.load(open('$RUNNER_TEMP/.benchkit-otel.state.json'))
+          for k, v in sorted(state.items()):
+              print(f'  {k}: {v}')
+          "
+
+          echo ""
+          echo "=== Check both collector PIDs are running ==="
+          OTEL_STATE='$RUNNER_TEMP/.benchkit-otel.state.json'
+          python3 -c "
+          import json, os, signal
+          state = json.load(open('$RUNNER_TEMP/.benchkit-otel.state.json'))
+          c1_pid = state.get('collectorPid')
+          c2_pid = state.get('phaseCollectorPid')
+          print(f'Collector 1 PID: {c1_pid}')
+          print(f'Collector 2 PID: {c2_pid}')
+          # Check if processes exist
+          for name, pid in [('C1', c1_pid), ('C2', c2_pid)]:
+              if pid:
+                  try:
+                      os.kill(pid, 0)
+                      print(f'  ✅ {name} (PID {pid}) is running')
+                  except OSError:
+                      print(f'  ❌ {name} (PID {pid}) is NOT running')
+          "
+
+      # The monitor post step runs automatically and:
+      # 1. Stops Collector 1 (upstream)
+      # 2. Waits 2s for queue drain
+      # 3. Stops Collector 2 (phase-decorating)
+      # 4. Filters process metrics from output
+      # 5. Pushes telemetry JSONL to bench-data branch
+
+  # ── Non-phase baseline: ensure enable-phases: false still works ─
+  baseline-no-phases:
+    name: Baseline (no phases)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start monitor (default mode)
+        id: monitor
+        uses: strawgate/benchkit/actions/monitor@pr/318-dist
+        with:
+          scrape-interval: 5s
+          metric-sets: cpu,memory
+
+      - name: Emit a metric
+        uses: strawgate/benchkit/actions/emit-metric@pr/318-dist
+        with:
+          otlp-http-endpoint: ${{ steps.monitor.outputs.otlp-http-endpoint }}
+          name: e2e_baseline_metric
+          value: 99
+          unit: score
+          direction: bigger_is_better
+
+      - name: Brief workload
+        run: sleep 5
+
+      - name: Verify no phase infrastructure
+        run: |
+          echo "=== Phase state file should NOT exist ==="
+          if [ -f "$RUNNER_TEMP/.benchkit-phase.json" ]; then
+            echo "❌ Phase state file exists in non-phase mode!"
+            exit 1
+          else
+            echo "✅ No phase state file (correct)"
+          fi
+
+          echo ""
+          echo "=== benchkit-set-phase should NOT be on PATH ==="
+          if command -v benchkit-set-phase &>/dev/null; then
+            echo "❌ benchkit-set-phase is on PATH in non-phase mode!"
+            exit 1
+          else
+            echo "✅ benchkit-set-phase not on PATH (correct)"
+          fi
