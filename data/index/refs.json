@@ -1,9 +1,9 @@
 [
   {
     "ref": "refs/heads/main",
-    "latestRunId": "24103821559-1--bench-variant-fast",
-    "latestTimestamp": "2026-04-07T20:51:50.494Z",
+    "latestRunId": "24121675410-1--bench-native",
+    "latestTimestamp": "2026-04-08T06:38:57.346Z",
     "latestCommit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
-    "runCount": 19
+    "runCount": 20
   }
 ]
