@@ -1,0 +1,81 @@
+{
+  "run": {
+    "id": "24176312004-1--bench-native",
+    "timestamp": "2026-04-09T06:39:03.091Z",
+    "commit": "4891e5aee80b15894297094ba4286ff3909b3ff7",
+    "ref": "refs/heads/main",
+    "benchmarks": 10,
+    "metrics": [
+      "value"
+    ]
+  },
+  "metricSnapshots": [
+    {
+      "metric": "value",
+      "unit": "ns/op",
+      "direction": "smaller_is_better",
+      "values": [
+        {
+          "name": "SearchAlgorithms/linear",
+          "value": 257,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "SearchAlgorithms/linear/throughput",
+          "value": 130222,
+          "unit": "ns/op",
+          "direction": "bigger_is_better"
+        },
+        {
+          "name": "SearchAlgorithms/binary",
+          "value": 46,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "SearchAlgorithms/binary/throughput",
+          "value": 874965,
+          "unit": "ns/op",
+          "direction": "bigger_is_better"
+        },
+        {
+          "name": "SearchAlgorithms/hash",
+          "value": 13,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "SearchAlgorithms/hash/throughput",
+          "value": 3300517,
+          "unit": "ns/op",
+          "direction": "bigger_is_better"
+        },
+        {
+          "name": "DataStructures/btree-insert",
+          "value": 888,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "DataStructures/btree-insert/bytes_per_op",
+          "value": 130,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "DataStructures/btree-delete",
+          "value": 326,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        },
+        {
+          "name": "DataStructures/btree-lookup",
+          "value": 78,
+          "unit": "ns/op",
+          "direction": "smaller_is_better"
+        }
+      ]
+    }
+  ]
+}
